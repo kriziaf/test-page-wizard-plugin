@@ -127,7 +127,7 @@ src/app/
 |---------|--------|
 | overview-cards, accent-cards, graphic-cards, horizontal-cards, external-link-cards | Drawn and renamed. All five are in `card-patterns/` |
 | bullet-image, text-media, expanded-text | Drawn and renamed, in `text-and-list/` |
-| longform-text | Parked. No drawings yet. Renders as a labeled placeholder until drawn |
+| longform-text | Mock drawings (paragraph, bullet-list, resource-list) in `text-and-list/`, plain text on white, marked `data-mock="longform-text"`. Replace in place with the final design, same file names |
 | promo-banner-card (4), two-col-form (2), hero-primary (3), hero-secondary (3) | Drawn and renamed, in `functional-patterns/`. Promo banner sits with the functional set for now |
 
 Mock images: the image areas in Text Media (4), Bullet Image (3) and Overview Cards `stacked-right` contain a neutral mock image drawn into the SVG, tagged `data-mock="image"` so it can be found and swapped later.
@@ -145,7 +145,7 @@ Drawings are 80 KB to 2 MB each because text is converted to outlines and two pr
 
 ## Reference Templates
 
-`templates/services-page/` holds four full-page drawings (01 Virtual Care Overview, 02 Urgent Care & Walk-ins, 03 Find a Provider, 05 Primary Care at Home; 04 is absent). They are 1.8 MB to 15 MB each, 33 MB in total. Plan: treat them as reference material for building the Services page, never load them in the app or the export, and decide whether they belong in the repo at this size.
+`templates/services-page/` holds four full-page drawings (01 Virtual Care Overview, 02 Urgent Care & Walk-ins, 03 Find a Provider, 04 Primary Care at Home, renumbered from 05). Each has a Two-Col Form appended at the bottom (01 and 03 `subtle`, 02 and 04 `brand`). They are 2.2 MB to 15 MB each, about 35 MB in total. Plan: treat them as reference material for building the Services page, never load them in the app or the export, and decide whether they belong in the repo at this size.
 
 ## Build Order
 
