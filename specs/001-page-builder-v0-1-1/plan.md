@@ -153,7 +153,7 @@ Drawings are 80 KB to 2 MB each because text is converted to outlines and two pr
 Build and review the mock one page type at a time, so the SVGs you draw and the section lists are checked against a real page before moving on:
 
 1. Services (Hero Primary, External Link Cards, Expanded Text, Text Media, Accent Cards, Promo Banner Card, Two-Col Form), checked against the four reference templates
-2. Business Page (Hero Primary, Overview Cards, Text Media, Accent Cards, Promo Banner Card, Two-Col Form)
+2. Business Page, on hold (Hero Primary, Overview Cards, Text Media, Accent Cards, Promo Banner Card, Two-Col Form)
 3. Article, and Blog with it (adds Hero Secondary, Longform Text, Horizontal Cards, External Link Cards)
 
 Graphic Cards is parked; it is available through Add section on Services.
