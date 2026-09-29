@@ -57,7 +57,7 @@ Source of truth for pattern names, variants, and guidance: `src/app/patterns/REA
 | horizontal-cards | `default` |
 | external-link-cards | `default` |
 | bullet-image | `icon-bullets`, `simple-bullets`, `grid` |
-| text-media | `image-left`, `text-left` [NEEDS CLARIFICATION: the docs also list Photo or Video. Is that a second drawing per layout (four SVGs) or one drawing per layout?] |
+| text-media | `image-left-photo`, `image-left-video`, `text-left-photo`, `text-left-video` |
 | expanded-text | `centered-2-col`, `split-1-col`, `centered-3-col`, `split-2-col` |
 | longform-text | `paragraph`, `bullet-list`, `resource-list` |
 | hero-primary | `image-overlay`, `form-image`, `split-media` |
@@ -65,7 +65,7 @@ Source of truth for pattern names, variants, and guidance: `src/app/patterns/REA
 | two-col-form | `default`, `tinted-form` |
 | promo-banner-card | `image-led`, `branded-cta`, `simple-cta` |
 
-That is 28 SVGs with text-media at two per layout.
+That is 30 SVGs.
 
 How it works:
 
