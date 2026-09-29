@@ -1,19 +1,18 @@
 import { useState, useCallback } from "react";
-import { Check, Lock, ChevronUp, ChevronDown, Trash2, Plus, Upload, Zap } from "lucide-react";
+import { Check, Lock, ChevronUp, ChevronDown, Trash2, Plus, Zap, ClipboardPaste } from "lucide-react";
+import {
+  PATTERNS,
+  variantsOf,
+  variantLabel,
+  type PatternId,
+} from "./patterns/registry";
+import { MockPage, useLoadedSections } from "./mock/MockPage";
+import { buildHtml, downloadHtml } from "./export/exportHtml";
 
 // ── Types ────────────────────────────────────────────────────────────────
-type PageType = "business" | "article" | "bio" | "services";
+type PageType = "business" | "article" | "blog" | "services";
 
-type SectionPattern =
-  | "hero"
-  | "accent-cards"
-  | "overview-cards"
-  | "graphic-cards"
-  | "external-link-cards"
-  | "text-media"
-  | "expanded-text"
-  | "form"
-  | "promo-banner";
+type SectionPattern = PatternId;
 
 interface PageSection {
   id: string;
@@ -54,233 +53,151 @@ const PAGE_TYPES: { id: PageType; name: string; desc: string; icon: string }[] =
   },
   {
     id: "article",
-    name: "Article Page",
+    name: "Article",
     desc: "News story, thought leadership, or editorial content",
     icon: "◎",
   },
   {
-    id: "bio",
-    name: "Bio Page",
-    desc: "Individual profile, leadership team member, or author page",
+    id: "blog",
+    name: "Blog",
+    desc: "Blog post or editorial series entry",
     icon: "◉",
   },
   {
     id: "services",
-    name: "Services Page",
+    name: "Services",
     desc: "Service catalog, specialty area, or product line overview",
     icon: "◐",
   },
 ];
 
-const PATTERN_META: Record<
-  SectionPattern,
-  { label: string; color: string; bg: string }
-> = {
-  hero: { label: "Hero", color: "#0033ff", bg: "#e8eeff" },
-  "accent-cards": { label: "Accent cards", color: "#7a3fff", bg: "#f0e8ff" },
-  "overview-cards": {
-    label: "Overview cards",
-    color: "#0077aa",
-    bg: "#e0f4ff",
-  },
-  "graphic-cards": {
-    label: "Graphic cards",
-    color: "#00885a",
-    bg: "#e0f5ee",
-  },
-  "external-link-cards": {
-    label: "External link cards",
-    color: "#885500",
-    bg: "#fff3e0",
-  },
-  "text-media": { label: "Text / media", color: "#555", bg: "#f0eeec" },
-  "expanded-text": { label: "Expanded text", color: "#555", bg: "#f0eeec" },
-  form: { label: "Form", color: "#cc2200", bg: "#fff0ee" },
-  "promo-banner": { label: "Promo banner", color: "#007755", bg: "#e0fff5" },
+const GROUP_COLORS: Record<string, { color: string; bg: string }> = {
+  "Card patterns": { color: "#7a3fff", bg: "#f0e8ff" },
+  "Text and list": { color: "#555", bg: "#f0eeec" },
+  Functional: { color: "#0033ff", bg: "#e8eeff" },
 };
 
-const SECTIONS_BY_TYPE: Record<
-  PageType,
-  Omit<PageSection, "variant">[]
-> = {
+const PATTERN_META = Object.fromEntries(
+  (Object.keys(PATTERNS) as PatternId[]).map((id) => [
+    id,
+    { label: PATTERNS[id].label, ...GROUP_COLORS[PATTERNS[id].group] },
+  ]),
+) as Record<SectionPattern, { label: string; color: string; bg: string }>;
+
+const isHeroPattern = (p: SectionPattern) => p === "hero-primary" || p === "hero-secondary";
+
+// Wireframe shape used by the small previews in Steps 4 to 6.
+const WIRE_KIND: Record<SectionPattern, string> = {
+  "hero-primary": "hero",
+  "hero-secondary": "hero",
+  "overview-cards": "overview-cards",
+  "graphic-cards": "graphic-cards",
+  "horizontal-cards": "overview-cards",
+  "accent-cards": "accent-cards",
+  "highlight-band": "accent-cards",
+  "external-link-cards": "external-link-cards",
+  "bullet-image": "text-media",
+  "text-media": "text-media",
+  "expanded-text": "expanded-text",
+  "longform-text": "expanded-text",
+  "two-col-form": "form",
+  "promo-banner-card": "promo-banner",
+};
+
+// First documented variant per pattern (spec: default is the first documented variant).
+const DEFAULT_VARIANT: Record<SectionPattern, string> = {
+  "overview-cards": "stacked-right",
+  "accent-cards": "brand",
+  "graphic-cards": "illustration",
+  "horizontal-cards": "1-col-large",
+  "external-link-cards": "compact",
+  "bullet-image": "icon-bullets",
+  "text-media": "image-left-photo",
+  "expanded-text": "centered-2-col",
+  "longform-text": "paragraph",
+  "highlight-band": "subtle",
+  "hero-primary": "image-overlay",
+  "hero-secondary": "brand-strong",
+  "two-col-form": "subtle",
+  "promo-banner-card": "image-led-brand",
+};
+
+type SectionDef = {
+  id: string;
+  name: string;
+  pattern: SectionPattern;
+  description: string;
+  required?: boolean;
+  variant?: string; // overrides DEFAULT_VARIANT
+};
+
+// Recommended sections per page type (spec: "Recommended Sections").
+const ARTICLE_SECTIONS: SectionDef[] = [
+  { id: "a1", name: "Article hero", pattern: "hero-secondary", description: "Headline and supporting line with one image", required: true },
+  { id: "a2", name: "Article body", pattern: "longform-text", description: "Opening text establishing context", required: true },
+  { id: "a3", name: "Text + media", pattern: "text-media", description: "Inline photo or video with surrounding copy" },
+  { id: "a4", name: "Related articles", pattern: "horizontal-cards", description: "Related editorial items" },
+  { id: "a5", name: "Related links", pattern: "external-link-cards", description: "Curated links to related pages" },
+  { id: "a6", name: "Supporting details", pattern: "accent-cards", description: "Short supporting facts, standing in for an author bio", required: true },
+];
+
+const SECTIONS_BY_TYPE: Record<PageType, SectionDef[]> = {
   business: [
-    {
-      id: "b1",
-      name: "Brand hero",
-      pattern: "hero",
-      description: "Main headline, sub-copy, primary CTA, and supporting visual",
-      required: true,
-      variants: ["Full-bleed image", "Split layout", "Video background"],
-    },
-    {
-      id: "b2",
-      name: "Entry points",
-      pattern: "overview-cards",
-      description: "3–4 cards linking to key product or service areas",
-      variants: ["3-up grid", "4-up grid", "Horizontal scroll"],
-    },
-    {
-      id: "b3",
-      name: "Feature overview",
-      pattern: "text-media",
-      description: "Primary service or product highlight with supporting visual",
-      variants: ["Image right", "Image left", "Stacked"],
-    },
-    {
-      id: "b4",
-      name: "Key metrics",
-      pattern: "accent-cards",
-      description: "3–5 stat tiles establishing trust and scale",
-      required: true,
-      variants: ["3-column", "4-column", "Row with icons"],
-    },
-    {
-      id: "b5",
-      name: "Promo strip",
-      pattern: "promo-banner",
-      description: "Seasonal campaign or cross-sell promotion",
-      variants: ["Full-width color", "Image-backed", "Minimal text"],
-    },
-    {
-      id: "b6",
-      name: "Final action",
-      pattern: "text-media",
-      description: "Closing CTA module with supporting copy",
-      required: true,
-      variants: ["Centered", "Split", "Form inline"],
-    },
+    { id: "b1", name: "Brand hero", pattern: "hero-primary", description: "Main headline, supporting copy, buttons, and one image", required: true },
+    { id: "b2", name: "Entry points", pattern: "overview-cards", description: "Cards linking to key product or service areas" },
+    { id: "b3", name: "Feature overview", pattern: "text-media", description: "Primary service highlight with photo or video" },
+    { id: "b4", name: "Supporting details", pattern: "accent-cards", description: "Short feature cards with no links", required: true },
+    { id: "b5", name: "Promo banner", pattern: "promo-banner-card", description: "Campaign or next-step promotion" },
+    { id: "b6", name: "Contact form", pattern: "two-col-form", description: "Context beside a short form", required: true },
   ],
-  article: [
-    {
-      id: "a1",
-      name: "Article hero",
-      pattern: "hero",
-      description: "Headline, byline, publication date, and lead image",
-      required: true,
-      variants: ["Full-bleed", "Compact", "Pull-quote lead"],
-    },
-    {
-      id: "a2",
-      name: "Lead body text",
-      pattern: "expanded-text",
-      description: "Opening paragraphs establishing context and voice",
-      required: true,
-      variants: ["Single column", "With pull quote", "With sidebar"],
-    },
-    {
-      id: "a3",
-      name: "Text + media",
-      pattern: "text-media",
-      description: "Inline images, charts, or video with surrounding copy",
-      variants: ["Image inline", "Fullwidth break", "Video embed"],
-    },
-    {
-      id: "a4",
-      name: "Related links",
-      pattern: "external-link-cards",
-      description: "2–3 curated external or internal resources",
-      variants: ["2-up row", "3-up row", "Compact list"],
-    },
-    {
-      id: "a5",
-      name: "Author bio",
-      pattern: "accent-cards",
-      description: "Compact author profile card",
-      required: true,
-      variants: ["With avatar", "Text only", "Expanded"],
-    },
-  ],
-  bio: [
-    {
-      id: "p1",
-      name: "Profile hero",
-      pattern: "hero",
-      description: "Headshot, name, title, and primary contact CTA",
-      required: true,
-      variants: ["Photo left", "Photo centered", "Cover image"],
-    },
-    {
-      id: "p2",
-      name: "About summary",
-      pattern: "expanded-text",
-      description: "Short bio paragraph with key credentials",
-      required: true,
-      variants: ["Single column", "With highlights", "Pull quote"],
-    },
-    {
-      id: "p3",
-      name: "Experience",
-      pattern: "text-media",
-      description: "Role history with logos or timeline visual",
-      variants: ["Logos", "Timeline", "Text list"],
-    },
-    {
-      id: "p4",
-      name: "Skills & expertise",
-      pattern: "accent-cards",
-      description: "Tag-style skill or expertise category cards",
-      variants: ["Tag cloud", "2-column list", "3-up cards"],
-    },
-    {
-      id: "p5",
-      name: "Contact",
-      pattern: "form",
-      description: "Simple contact or inquiry form",
-      required: true,
-      variants: ["Minimal 3-field", "Full form", "CTA button only"],
-    },
-  ],
+  article: ARTICLE_SECTIONS,
+  blog: ARTICLE_SECTIONS.map((s) => ({ ...s, id: s.id.replace("a", "g") })),
   services: [
-    {
-      id: "s1",
-      name: "Services hero",
-      pattern: "hero",
-      description: "Services headline and positioning statement",
-      required: true,
-      variants: ["Full-bleed", "Split with visual", "Compact"],
-    },
-    {
-      id: "s2",
-      name: "Service cards",
-      pattern: "graphic-cards",
-      description: "3–4 service offerings with icons or imagery",
-      required: true,
-      variants: ["3-up icons", "4-up with images", "2-up large"],
-    },
-    {
-      id: "s3",
-      name: "Service detail",
-      pattern: "text-media",
-      description: "Primary service deep-dive with supporting visual",
-      variants: ["Image right", "Image left", "No image"],
-    },
-    {
-      id: "s4",
-      name: "Inquiry form",
-      pattern: "form",
-      description: "Lead capture or service request form",
-      variants: ["Inline simple", "Modal trigger", "Multi-step"],
-    },
-    {
-      id: "s5",
-      name: "Trust proof",
-      pattern: "accent-cards",
-      description: "Client logos, testimonials, or certification badges",
-      variants: ["Logo row", "Testimonial cards", "Stats + logos"],
-    },
-    {
-      id: "s6",
-      name: "Final CTA",
-      pattern: "promo-banner",
-      description: "Closing promotional action strip",
-      required: true,
-      variants: ["Full-width color", "Bordered", "Dark"],
-    },
+    { id: "s1", name: "Services hero", pattern: "hero-primary", description: "Headline, supporting copy, and buttons over or beside a photo", required: true, variant: "split-media" },
+    { id: "s2", name: "Quick links", pattern: "external-link-cards", description: "Three wayfinding cards below the hero" },
+    { id: "s3", name: "Service overview", pattern: "expanded-text", description: "Features or services as icon cards", variant: "split-1-col" },
+    { id: "s4", name: "Feature video", pattern: "text-media", description: "Video with headline, body, and one button", variant: "image-left-video" },
+    { id: "s5", name: "Supporting details", pattern: "accent-cards", description: "Short feature cards with no links" },
+    { id: "s6", name: "Final CTA", pattern: "promo-banner-card", description: "Closing banner with one or two buttons", required: true, variant: "branded-cta" },
+    { id: "s7", name: "Inquiry form", pattern: "two-col-form", description: "Context beside a short form" },
   ],
 };
+
+function makeSection(def: SectionDef): PageSection {
+  const variants = variantsOf(def.pattern);
+  const wanted = def.variant ?? DEFAULT_VARIANT[def.pattern];
+  return {
+    id: def.id,
+    name: def.name,
+    pattern: def.pattern,
+    description: def.description,
+    required: def.required,
+    variants,
+    variant: variants.includes(wanted) ? wanted : (variants[0] ?? wanted),
+  };
+}
 
 function initSections(type: PageType): PageSection[] {
-  return SECTIONS_BY_TYPE[type].map((s) => ({ ...s, variant: s.variants[0] }));
+  return SECTIONS_BY_TYPE[type].map(makeSection);
+}
+
+/** Sections offered by Add section: removed recommended ones, then patterns not in the list. */
+function addPool(type: PageType, sections: PageSection[]): SectionDef[] {
+  const heroPrimaryOk = type === "business" || type === "services";
+  const recommended = SECTIONS_BY_TYPE[type];
+  const removed = recommended.filter((d) => !sections.some((s) => s.id === d.id));
+  const usedPatterns = new Set(recommended.map((d) => d.pattern));
+  const extras: SectionDef[] = (Object.keys(PATTERNS) as PatternId[])
+    .filter((p) => !usedPatterns.has(p))
+    .map((p) => ({
+      id: `x-${p}`,
+      name: PATTERNS[p].label,
+      pattern: p,
+      description: "Not in the recommended list",
+    }));
+  return [...removed, ...extras].filter(
+    (d) => (heroPrimaryOk || d.pattern !== "hero-primary") && variantsOf(d.pattern).length > 0,
+  );
 }
 
 // ── Step sidebar ──────────────────────────────────────────────────────────
@@ -604,10 +521,15 @@ function BriefField({
 function Step3({
   brief,
   setBrief,
+  pasteText,
+  setPasteText,
 }: {
   brief: ContentBrief;
   setBrief: (b: ContentBrief) => void;
+  pasteText: string;
+  setPasteText: (t: string) => void;
 }) {
+  const [pasteOpen, setPasteOpen] = useState(pasteText.length > 0);
   const set =
     (key: keyof ContentBrief) =>
     (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) =>
@@ -618,21 +540,46 @@ function Step3({
       <StepHeader
         num="03"
         title="Create the content brief"
-        desc="Define the page audience, goal, and content inputs. Fill in these fields or upload an existing brief document."
+        desc="Define the page audience, goal, and content inputs. Fill in these fields or paste an existing brief."
       />
 
-      {/* Upload zone */}
-      <div
-        className="mb-6 flex cursor-pointer items-center justify-center gap-2.5 rounded-xl py-4 transition-colors hover:bg-white"
-        style={{ border: "1.5px dashed rgba(0,0,0,0.11)", background: "#faf9f7" }}
-      >
-        <Upload size={14} style={{ color: "#c0bbb7" }} />
-        <span className="text-[13px]" style={{ color: "#c0bbb7" }}>
-          Upload brief document
-          <span className="ml-1.5" style={{ color: "#d8d4d0" }}>
-            · .doc .docx .pdf .txt
+      {/* Paste brief */}
+      <div className="mb-6">
+        <button
+          onClick={() => setPasteOpen(!pasteOpen)}
+          className="flex w-full cursor-pointer items-center justify-center gap-2.5 rounded-xl py-4 transition-colors hover:bg-white"
+          style={{ border: "1.5px dashed rgba(0,0,0,0.11)", background: "#faf9f7" }}
+        >
+          <ClipboardPaste size={14} style={{ color: "#a09c98" }} />
+          <span className="text-[13px]" style={{ color: "#a09c98" }}>
+            {pasteOpen ? "Hide pasted brief" : pasteText.trim() ? "Edit pasted brief" : "Paste brief"}
           </span>
-        </span>
+        </button>
+        {pasteOpen && (
+          <div className="mt-2">
+            <textarea
+              rows={10}
+              value={pasteText}
+              onChange={(e) => setPasteText(e.target.value)}
+              placeholder="Paste your brief here. It is kept with this page and does not fill the fields below."
+              style={{
+                width: "100%",
+                fontSize: "13px",
+                color: "#1a1a1a",
+                border: "1px solid rgba(0,0,0,0.1)",
+                borderRadius: "10px",
+                padding: "10px 12px",
+                background: "#fff",
+                outline: "none",
+                fontFamily: "'Figtree', system-ui, sans-serif",
+                lineHeight: 1.5,
+              }}
+            />
+            <div className="mt-1 text-[11px]" style={{ color: "#c0bbb7" }}>
+              {pasteText.trim().length} characters
+            </div>
+          </div>
+        )}
       </div>
 
       <div className="space-y-4">
@@ -829,7 +776,7 @@ function ContentPanel({
   }
 
   const pm = PATTERN_META[section.pattern];
-  const isHero = section.pattern === "hero";
+  const isHero = isHeroPattern(section.pattern);
 
   const handleSave = () => {
     setSaved(true);
@@ -968,7 +915,7 @@ function Step4({
   setHeroContent: (c: HeroContent) => void;
 }) {
   const [selectedId, setSelectedId] = useState<string | null>(
-    sections.find((s) => s.pattern === "hero")?.id ?? null,
+    sections.find((s) => isHeroPattern(s.pattern))?.id ?? null,
   );
 
   const selectedSection = sections.find((s) => s.id === selectedId) ?? null;
@@ -1073,7 +1020,7 @@ function Step4({
                       className="text-[11px]"
                       style={{ color: isSelected ? "#0033ff" : "#ddd" }}
                     >
-                      {s.pattern === "hero" ? "✎" : "›"}
+                      {isHeroPattern(s.pattern) ? "✎" : "›"}
                     </span>
                   </span>
                 </button>
@@ -1113,12 +1060,26 @@ function Step4({
 
 // ── Step 5: Review ────────────────────────────────────────────────────────
 function Step5({
+  pageType,
   sections,
   setSections,
 }: {
+  pageType: PageType | null;
   sections: PageSection[];
   setSections: (s: PageSection[]) => void;
 }) {
+  const [addOpen, setAddOpen] = useState(false);
+  const pool = pageType ? addPool(pageType, sections) : [];
+
+  const addSection = (def: SectionDef) => {
+    const n = sections.filter((s) => s.pattern === def.pattern).length;
+    setSections([
+      ...sections,
+      makeSection({ ...def, id: `${def.id}-${Date.now()}${n}`, required: false }),
+    ]);
+    setAddOpen(false);
+  };
+
   const move = (idx: number, dir: -1 | 1) => {
     const next = [...sections];
     const target = idx + dir;
@@ -1221,7 +1182,7 @@ function Step5({
                     }}
                   >
                     {s.variants.map((v) => (
-                      <option key={v} value={v}>{v}</option>
+                      <option key={v} value={v}>{variantLabel(v)}</option>
                     ))}
                   </select>
 
@@ -1258,12 +1219,48 @@ function Step5({
           </div>
 
           <button
+            onClick={() => setAddOpen(!addOpen)}
             className="mt-3.5 flex w-full cursor-pointer items-center justify-center gap-2 rounded-xl py-3 transition-colors hover:bg-white"
             style={{ border: "1.5px dashed rgba(0,0,0,0.1)", background: "transparent", color: "#b0aca8" }}
           >
             <Plus size={13} />
             <span className="text-[13px] font-medium">Add section</span>
           </button>
+          {addOpen && (
+            <div
+              className="mt-2 space-y-1.5 rounded-xl p-2"
+              style={{ background: "#fff", border: "1px solid rgba(0,0,0,0.08)" }}
+            >
+              {pool.length === 0 && (
+                <div className="px-3 py-2 text-[12px]" style={{ color: "#b0aca8" }}>
+                  No more sections to add.
+                </div>
+              )}
+              {pool.map((d) => {
+                const pm = PATTERN_META[d.pattern];
+                return (
+                  <button
+                    key={d.id}
+                    onClick={() => addSection(d)}
+                    className="flex w-full cursor-pointer items-center gap-3 rounded-lg px-3 py-2 text-left hover:bg-[#faf9f7]"
+                  >
+                    <span className="flex-1 text-[13px] font-medium" style={{ color: "#1a1a1a" }}>
+                      {d.name}
+                    </span>
+                    <span className="text-[11.5px]" style={{ color: "#aaa" }}>
+                      {d.description}
+                    </span>
+                    <span
+                      className="rounded-md px-1.5 py-0.5 text-[9.5px] font-medium"
+                      style={{ fontFamily: "'DM Mono', monospace", background: pm.bg, color: pm.color }}
+                    >
+                      {pm.label}
+                    </span>
+                  </button>
+                );
+              })}
+            </div>
+          )}
         </div>
 
         {/* ── Right: live preview ── */}
@@ -1352,35 +1349,55 @@ function Step6({
   const typeName =
     PAGE_TYPES.find((p) => p.id === pageType)?.name ?? "Page";
 
+  const loaded = useLoadedSections(generated ? sections : []);
+
   if (generated) {
+    const missing = loaded?.filter((l) => !l.svg).length ?? 0;
     return (
-      <div className="mx-auto flex max-w-[520px] flex-col items-center px-6 py-24 text-center">
-        <div
-          className="mb-5 flex h-16 w-16 items-center justify-center rounded-2xl text-2xl"
-          style={{ background: "#e0fff5", color: "#007755" }}
-        >
-          ✓
+      <div className="mx-auto max-w-[1100px] px-6 py-10">
+        <StepHeader
+          num="06"
+          title="Mock page"
+          desc={`${typeName} with ${sections.length} sections, built from the pattern drawings. Text in the drawings is placeholder; your brief is not shown here yet.`}
+        />
+        <div className="mb-5 flex items-center gap-3">
+          <button
+            onClick={() => loaded && downloadHtml(`${typeName.toLowerCase().replace(/\s+/g, "-")}-mock.html`, buildHtml(`${typeName} mock`, loaded))}
+            disabled={!loaded}
+            className="flex cursor-pointer items-center gap-2 rounded-full px-5 py-2.5 text-[13px] font-semibold text-white"
+            style={{ background: loaded ? "#0033ff" : "#c8c4c0" }}
+          >
+            Export HTML
+          </button>
+          <button
+            disabled
+            title="Available in v2"
+            className="flex items-center gap-2 rounded-full px-5 py-2.5 text-[13px] font-semibold"
+            style={{ border: "1px solid rgba(0,0,0,0.09)", color: "#c0bbb7", cursor: "not-allowed", background: "#fff" }}
+          >
+            Figma (v2)
+          </button>
+          <div className="flex-1" />
+          {missing > 0 && (
+            <span className="text-[12px]" style={{ color: "#cc4400" }}>
+              {missing} section{missing > 1 ? "s" : ""} without a drawing
+            </span>
+          )}
+          <button
+            onClick={() => setGenerated(false)}
+            className="cursor-pointer text-[12.5px] font-medium"
+            style={{ color: "#b0aca8" }}
+          >
+            ← Back to spec
+          </button>
         </div>
         <div
-          className="mb-2 text-[20px] font-semibold"
-          style={{ color: "#1a1a1a" }}
+          className="overflow-hidden rounded-2xl"
+          style={{ border: "1px solid rgba(0,0,0,0.09)", background: "#fff" }}
+          data-testid="mock-page"
         >
-          Page spec ready
+          <MockPage sections={sections} />
         </div>
-        <p
-          className="text-[13.5px] leading-relaxed"
-          style={{ color: "#888" }}
-        >
-          Your {typeName} has been specced with {sections.length} sections
-          following the shared structure. The architecture is ready for build.
-        </p>
-        <button
-          onClick={() => setGenerated(false)}
-          className="mt-6 cursor-pointer text-[12.5px] font-medium"
-          style={{ color: "#b0aca8" }}
-        >
-          ← Back to spec
-        </button>
       </div>
     );
   }
@@ -1487,8 +1504,8 @@ function Step6({
         className="mt-3 text-center text-[12px]"
         style={{ color: "#c0bbb7" }}
       >
-        Produces one {typeName.toLowerCase()} following the approved shared
-        structure
+        Builds a mock {typeName.toLowerCase()} from the pattern drawings, then
+        exports it as HTML
       </p>
     </div>
   );
@@ -1499,7 +1516,7 @@ function SectionWire({ section, index }: { section: PageSection; index: number }
   const pm = PATTERN_META[section.pattern];
 
   const wireframe = () => {
-    switch (section.pattern) {
+    switch (WIRE_KIND[section.pattern]) {
       case "hero":
         return (
           <div
@@ -1806,6 +1823,7 @@ export default function App() {
     existingCopy:
       "Support on your GLP-1 journey\n\nHeld to the highest standards under the Evernorth® brand, Evernorth EnGuide℠ Pharmacy is committed to offering guidance and support on your GLP-1 journey. Our team of specially trained pharmacists are readily available to address your needs and work directly with your doctor to help you save money, discuss treatment options, and more.\n\nNeed a prescription that isn't a GLP-1? Express Scripts® Pharmacy, an Evernorth home delivery pharmacy, is ready to assist you.\n\nMember benefits\nAs an Evernorth EnGuide Pharmacy patient, you'll have access to:\n— Assistance with getting you safely to your optimal dose for best results\n— 90-day supplies: Switching to a longer supply could save you time and money while ensuring your therapy remains uninterrupted.\n— Extended Payment Plan (EPP): Spread out your costs with the option to pay in three equal payments instead of all at once.\n— Automatic reminders: We'll send you notifications reminding you to place an order when you're seven days and two days away from needing a refill.\n— Manufacturer's savings card programs (also known as coupons): We are currently accepting select manufacturer savings cards.\n\nHow to get started\nNew and current members: We'll send your GLP-1 prescription right to your door, with free standard shipping.\nProviders: When your patients request GLP-1s, we're here to work with you.",
   });
+  const [pasteText, setPasteText] = useState("");
   const [sections, setSections] = useState<PageSection[]>([]);
   const [completed, setCompleted] = useState<Set<number>>(new Set([1, 2]));
   const [heroContent, setHeroContent] = useState<HeroContent>(DEFAULT_HERO);
@@ -1919,7 +1937,7 @@ export default function App() {
               />
             )}
             {step === 3 && (
-              <Step3 brief={brief} setBrief={setBrief} />
+              <Step3 brief={brief} setBrief={setBrief} pasteText={pasteText} setPasteText={setPasteText} />
             )}
             {step === 4 && (
               <Step4
@@ -1930,7 +1948,7 @@ export default function App() {
               />
             )}
             {step === 5 && (
-              <Step5 sections={sections} setSections={setSections} />
+              <Step5 pageType={pageType} sections={sections} setSections={setSections} />
             )}
             {step === 6 && (
               <Step6

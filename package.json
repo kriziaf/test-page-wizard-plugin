@@ -4,6 +4,9 @@
   "version": "0.0.1",
   "type": "module",
   "scripts": {
+    "optimize": "node scripts/optimize-patterns.mjs",
+    "predev": "node scripts/optimize-patterns.mjs",
+    "prebuild": "node scripts/optimize-patterns.mjs",
     "build": "vite build",
     "dev": "vite"
   },
@@ -68,6 +71,8 @@
   "devDependencies": {
     "@tailwindcss/vite": "4.1.12",
     "@vitejs/plugin-react": "4.7.0",
+    "sharp": "^0.35.5",
+    "svgo": "^4.1.0",
     "tailwindcss": "4.1.12",
     "vite": "6.3.5"
   },

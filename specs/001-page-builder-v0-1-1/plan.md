@@ -158,6 +158,8 @@ Build and review the mock one page type at a time, so the SVGs you draw and the 
 
 Graphic Cards is parked; it is available through Add section on Services.
 
+Services defaults differ from "first documented variant" so the default page matches the reference templates: Hero Primary `split-media`, Expanded Text `split-1-col`, Text Media `image-left-video`, Promo Banner Card `branded-cta`.
+
 ## Versioning
 
 Option A: one spec folder per release (`001-page-builder-v0-1-1`, later `002-page-builder-v0-2-0`). v0.1.1 is one cohesive release. Switch to one folder per feature, with git tags marking releases, when a release starts bundling several independent features. Add a `v0.1.1` git tag when it ships.
@@ -165,7 +167,7 @@ Option A: one spec folder per release (`001-page-builder-v0-1-1`, later `002-pag
 ## Later Versions (not in this plan)
 
 - **v0.2**: content rules and validation, voice and tone guidance, Blog sections finalized, Search Results, tagged text slots in SVGs so the mock shows brief and hero content
-- **v0.3**: pattern data from Figma and Storybook
+- **v0.3**: pattern data from Figma and Storybook. The Leaf tokens and component CSS in `src/app/tokens-and-styles/` are the source for coded mocks (not used in v0.1.1)
 - **v1.0**: Figma export through Figma MCP, multi-page sets
 - Open items to schedule: Primary Care at Home page type
 
