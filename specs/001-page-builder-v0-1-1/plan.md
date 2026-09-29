@@ -61,11 +61,11 @@ Source of truth for pattern names, variants, and guidance: `src/app/patterns/REA
 | expanded-text | `centered-2-col`, `split-1-col`, `centered-3-col`, `split-2-col` |
 | longform-text | `paragraph`, `bullet-list`, `resource-list` |
 | hero-primary | `image-overlay`, `form-image`, `split-media` |
-| hero-secondary | `brand-teal`, `bright-green`, `light-neutral` |
+| hero-secondary | `brand-teal`, `bright-green`, `subtle` |
 | two-col-form | `subtle`, `brand` |
 | promo-banner-card | `image-led-brand`, `image-led-subtle`, `branded-cta`, `simple-cta` |
 
-That is 39 SVGs. Card pattern variants (overview, accent, graphic, horizontal, external link) are not in the pattern documentation, so their names describe the drawings the owner made. Longform Text, Hero Primary and Hero Secondary are not yet drawn.
+That is 39 SVGs. Card pattern variants (overview, accent, graphic, horizontal, external link) are not in the pattern documentation, so their names describe the drawings the owner made. Longform Text is not yet drawn.
 
 Variant naming rule: where a pattern has a gray treatment and a tinted-green treatment, they are called `subtle` (gray) and `brand` (tinted green).
 
@@ -128,8 +128,7 @@ src/app/
 | overview-cards, accent-cards, graphic-cards, horizontal-cards, external-link-cards | Drawn and renamed. All five are in `card-patterns/` |
 | bullet-image, text-media, expanded-text | Drawn and renamed, in `text-and-list/` |
 | longform-text | Parked. No drawings yet. Renders as a labeled placeholder until drawn |
-| promo-banner-card (4), two-col-form (2) | Drawn and renamed, in `functional-patterns/`. Promo banner sits with the functional set for now |
-| hero-primary, hero-secondary | Not drawn yet |
+| promo-banner-card (4), two-col-form (2), hero-primary (3), hero-secondary (3) | Drawn and renamed, in `functional-patterns/`. Promo banner sits with the functional set for now |
 
 Mock images: the image areas in Text Media (4), Bullet Image (3) and Overview Cards `stacked-right` contain a neutral mock image drawn into the SVG, tagged `data-mock="image"` so it can be found and swapped later.
 
@@ -141,6 +140,7 @@ Drawings are 80 KB to 2 MB each because text is converted to outlines and two pr
 - Optimize only when building the export, not the source files.
 - Use SVGO with ID prefixing per file. Its default ID minifying would make IDs collide when several SVGs are inlined into one HTML file. (The current files have unique IDs, so nothing collides today.)
 - Check the optimized output looks identical before relying on it.
+- Embedded photos are the bigger weight. Hero Secondary `subtle` is 23 MB, `brand-teal` 12 MB and Hero Primary `split-media` 10 MB, because each embeds 4096 px photos (up to 8 MB each) shown at about 500 px wide. SVGO does not shrink embedded photos. At export, downscale each embedded image to about twice its displayed width and recompress it (keeping transparency for the cut-out portraits). Sources stay untouched.
 - Text stays as outlines, so text swapping (option B) remains a later redraw or re-export job.
 
 ## Reference Templates
