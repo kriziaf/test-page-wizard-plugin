@@ -29,7 +29,7 @@ Format: `[ID] [P?] [Story] Description`. **[P]** = can run in parallel. Status: 
 - [x] T012 Compare the generated Services mock to `templates/services-page/01` to `04` section by section; gaps recorded in `plan.md` (Services Validation)
 - [ ] T013 Business Page pass: check the section list against a real Business page (ON HOLD)
 - [ ] T014 Article and Blog pass (Longform Text still mock drawings) (PARKED)
-- [ ] T015 [P] Confirm Leaf token match for `#EAF4F6` and `#0F7885` in the drawings
-- [ ] T016 Decide whether the ~35 MB `templates/` folder stays in the repo
-- [ ] T017 Decide on automated tests before v0.2
-- [ ] T018 Tag `v0.1.1` when shipped
+- [ ] T015 [P] Confirm Leaf token match for `#EAF4F6` and `#0F7885` in the drawings (PARKED)
+- [ ] T016 Decide whether the ~35 MB `templates/` folder stays in the repo (PARKED)
+- [ ] T017 Decide on automated tests before v0.2 (PARKED)
+- [x] T018 Tag `v0.1.1` when shipped

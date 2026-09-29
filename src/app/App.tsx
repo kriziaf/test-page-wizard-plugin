@@ -1904,7 +1904,7 @@ export default function App() {
           className="text-[10.5px]"
           style={{ fontFamily: "'DM Mono', monospace", color: "#383838" }}
         >
-          v0.1 · prototype
+          v0.1.1 · prototype
         </span>
       </header>
 
