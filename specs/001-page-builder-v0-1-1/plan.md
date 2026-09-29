@@ -6,7 +6,7 @@
 
 ## Summary
 
-Bring the existing v0.1 prototype in line with the spec: four page types, a paste-in text brief, a working Add section, and a Generate step that renders a mock page from lightweight mock components and demo SVGs and exports it as standalone HTML. Figma export is shown as v2 only.
+Bring the existing v0.1 prototype in line with the spec: four page types, a paste-in text brief, a working Add section, the thirteen documented patterns registered from a folder of SVGs, and a Generate step that stacks those SVGs into a mock page and exports it as standalone HTML. Figma export is shown as v2 only.
 
 ## Technical Context
 
@@ -24,7 +24,7 @@ Bring the existing v0.1 prototype in line with the spec: four page types, a past
 
 **Performance Goals**: Generate and export feel instant for pages of up to about 10 sections
 
-**Constraints**: Exported HTML makes no external requests (inline CSS, inline SVG)
+**Constraints**: Exported HTML makes no external requests (inline SVG, minimal inline CSS)
 
 **Scale/Scope**: Four page types, nine patterns, one user, one session
 
@@ -41,19 +41,39 @@ Carried over from the former ADR log. Rationale and alternatives are in [researc
 | Structure | Plugin orchestrates four skills (intake, architecture, customize, generate). v0.1.1 ships it as the single prototype UI |
 | Page types | Business Page, Article, Blog, Services. Bio removed. Search Results deferred |
 | Output | v1 HTML export of a mock page. v2 Figma via Figma MCP |
-| Mock rendering | Mock components per pattern, inline styles, inline SVG |
-| Demo media | SVGs supplied by the project owner, bundled with the tool |
+| Pattern registry | A folder of SVGs is the registry. The file name is the pattern and variant |
+| Mock rendering | The mock page stacks static SVGs (option A). No coded mock components, no text swapping in v0.1.1 |
 | Brief input | Paste-brief control opens a text area; no auto-fill of fields in v0.1.1 |
 
-## Mock Components (new)
+## Pattern Registry (new)
 
-One lightweight component per pattern, nine in total, each accepting a section (pattern, variant, name) plus brief and hero content:
+Source of truth for pattern names, variants, and guidance: `src/app/patterns/README.md`. Drawings live beside it as `{pattern}--{variant}.svg`, one file per variant, all drawn by the project owner. Patterns with no documented variants use `--default`.
 
-- hero, accent cards, overview cards, graphic cards, external-link cards, text/media, expanded text, form, promo banner
-- Variants change layout only (for example image left or right, 3-up or 4-up), not behavior
-- Hero uses the editable hero content; other patterns use brief text where a field matches (for example primary action for CTAs) and labeled placeholder copy otherwise
-- Media slots take a demo SVG from the bundled set
-- Styled with inline styles so the same markup renders in the app and in the export
+| Pattern | SVG files (`{pattern}--{variant}.svg`) |
+|---------|----------------------------------------|
+| overview-cards | `default` |
+| accent-cards | `default` |
+| graphic-cards | `default` |
+| horizontal-cards | `default` |
+| external-link-cards | `default` |
+| bullet-image | `icon-bullets`, `simple-bullets`, `grid` |
+| text-media | `image-left`, `text-left` [NEEDS CLARIFICATION: the docs also list Photo or Video. Is that a second drawing per layout (four SVGs) or one drawing per layout?] |
+| expanded-text | `centered-2-col`, `split-1-col`, `centered-3-col`, `split-2-col` |
+| longform-text | `paragraph`, `bullet-list`, `resource-list` |
+| hero-primary | `image-overlay`, `form-image`, `split-media` |
+| hero-secondary | `brand-teal`, `bright-green`, `light-neutral` |
+| two-col-form | `default`, `tinted-form` |
+| promo-banner-card | `image-led`, `branded-cta`, `simple-cta` |
+
+That is 28 SVGs with text-media at two per layout.
+
+How it works:
+
+- The app imports every SVG in the folder as text at build time. Adding a correctly named file registers that variant.
+- The Step 4 and Step 5 variant lists read from the registered file names instead of the hardcoded lists.
+- Mock page: for each section, in order, render the SVG for its pattern and variant. If none exists, render a labeled placeholder block.
+- Export: the same SVG text is written inline into the HTML file. No external requests.
+- Dev-time check: lists documented patterns and variants that have no SVG, and SVG files that match nothing.
 
 ## Project Structure
 
@@ -72,29 +92,33 @@ specs/001-page-builder-v0-1-1/
 ```text
 src/app/
 ├── App.tsx                  # existing: steps, state; edits listed below
+├── patterns/
+│   ├── README.md            # pattern documentation (provided)
+│   ├── *.svg                # one per pattern variant (drawn by owner)
+│   └── registry.ts          # reads the SVG folder, exposes patterns and variants
 ├── mock/
-│   ├── MockPage.tsx         # renders sections in order
-│   ├── components/          # nine mock pattern components
-│   └── assets/              # demo SVGs (provided)
+│   └── MockPage.tsx         # stacks SVGs for the chosen sections
 └── export/
     └── exportHtml.ts        # builds standalone HTML string and triggers download
 ```
 
-**Structure Decision**: Keep the prototype's single `App.tsx` for the step UI and add two small folders for the new mock rendering and export, so the new work is separable from the existing prototype.
+**Structure Decision**: Keep the prototype's single `App.tsx` for the step UI and add three small folders (patterns, mock, export), so the new work is separable from the existing prototype.
 
 ## Changes to Existing Prototype
 
 | Where | Change |
 |-------|--------|
 | Page type list and section templates | Replace Bio with Blog (copy of Article sections); no Search Results |
+| Pattern set | Replace the prototype's nine patterns with the thirteen documented ones, and re-map each page type's sections to them [NEEDS CLARIFICATION: mapping not yet decided] |
+| Steps 4 and 5 | Variant lists come from the registry, not hardcoded arrays |
 | Step 3 | Replace upload zone with paste-brief control and text area; hold pasted text in app state |
 | Step 5 | Wire Add section to the approved sections not currently on the page |
-| Step 6 | Replace "Page spec ready" confirmation with Generate, mock page view, Export HTML, and a disabled "Figma (v2)" option |
+| Step 6 | Replace "Page spec ready" confirmation with Generate, mock page view (stacked SVGs), Export HTML, and a disabled "Figma (v2)" option |
 | App state | Add pasted brief text; keep it across step navigation |
 
 ## Later Versions (not in this plan)
 
-- **v0.2**: content rules and validation, voice and tone guidance, Blog sections finalized, Search Results
+- **v0.2**: content rules and validation, voice and tone guidance, Blog sections finalized, Search Results, tagged text slots in SVGs so the mock shows brief and hero content
 - **v0.3**: pattern data from Figma and Storybook
 - **v1.0**: Figma export through Figma MCP, multi-page sets
 - Open items to schedule: Primary Care at Home page type

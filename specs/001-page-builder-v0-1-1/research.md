@@ -22,16 +22,18 @@ Converted from the earlier ADR log. Each entry: decision, rationale, alternative
 - **Rationale**: HTML ships now and is easy to open and share; Figma depends on tooling that is not available yet.
 - **Alternatives**: HTML and Figma together in v1 (blocked, larger scope); Figma only (no shareable output for developers).
 
-## 4. Mock rendering approach
+## 4. Pattern registry and mock rendering
 
-- **Decision**: Lightweight mock components with inline styles and inline SVG; the same components render in the app and in the export.
-- **Rationale**: Exported file must work offline with no external requests. Tailwind classes would not carry into a standalone file without also inlining a stylesheet.
-- **Alternatives**: Ship the compiled app stylesheet inside the export (larger, more moving parts); hand-write a separate HTML template per pattern (two sources of truth).
+- **Decision**: A folder of SVGs is the pattern registry, one file per variant named `{pattern}--{variant}.svg`. The mock page stacks the static SVGs (option A). The same SVG text is inlined into the HTML export.
+- **Rationale**: Patterns are building blocks the owner defines visually. Drawing them as SVGs avoids building a component library, adding a variant needs no code, and the export works offline with no external requests.
+- **Alternatives**: Coded mock components per pattern (a component library in miniature, two things to maintain); SVGs with tagged text slots that swap in user content (option B, more work, deferred to v0.2); ship the compiled app stylesheet in the export (larger, more moving parts).
 
-## 5. Demo media
+## 5. Pattern set
 
-- **Decision**: SVGs provided by the project owner, bundled with the tool and inlined into the export.
-- **Alternatives**: In-tool SVG upload (more UI and validation than an MVP needs); placeholder boxes only (weaker demo).
+- **Decision**: The thirteen patterns in `src/app/patterns/README.md` replace the prototype's nine. Names and variants follow that document.
+- **Rationale**: The document is the owner's definition of the building blocks the page builder must build to.
+- **Alternatives**: Keep the prototype's nine and map the new ones onto them (loses the documented variants).
+- **Open**: Which patterns each page type recommends.
 
 ## 6. Brief input
 
