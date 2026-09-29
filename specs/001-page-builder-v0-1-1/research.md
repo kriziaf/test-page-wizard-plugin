@@ -35,7 +35,13 @@ Converted from the earlier ADR log. Each entry: decision, rationale, alternative
 - **Alternatives**: Keep the prototype's nine and map the new ones onto them (loses the documented variants).
 - **Open**: Which patterns each page type recommends.
 
-## 6. Brief input
+## 6. Versioning
+
+- **Decision**: One Spec Kit folder per release for now, with a git tag (`v0.1.1`) when a release ships.
+- **Rationale**: v0.1.1 is one cohesive release. Spec Kit numbers folders per feature (001, 002, ...) and has no release versions of its own, so the release-to-folder mapping is ours.
+- **Alternatives**: One folder per feature with tags marking releases (closer to Spec Kit's default; more folders than a small release needs). Revisit when a release bundles several independent features.
+
+## 7. Brief input
 
 - **Decision**: Paste-brief control opens a text area. The text is stored and editable. It does not fill the seven fields in v0.1.1.
 - **Alternatives**: Real file upload for .doc/.docx/.pdf/.txt (parsing work); auto-splitting pasted text into fields (needs rules or a model call).

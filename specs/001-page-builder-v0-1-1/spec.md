@@ -116,7 +116,7 @@ At Step 6 the user generates a mock example of the page, stacked from the patter
 ### Functional Requirements
 
 - **FR-001**: The system MUST offer exactly four page types in Step 2: Business Page, Article, Blog, Services. Bio is removed. Search Results is not offered in v0.1.1.
-- **FR-002**: The system MUST provide a recommended section list for each of the four page types, each section mapped to one approved pattern with at least one variant. The approved patterns are the thirteen in `src/app/patterns/README.md`: Overview Cards, Accent Cards, Graphic Cards, Horizontal Cards, External Link Cards, Bullet Image, Text Media, Expanded Text, Longform Text, Hero Primary, Hero Secondary, Two-Col Form, Promo Banner Card. Pattern and variant names follow that document [NEEDS CLARIFICATION: which patterns and variants each page type recommends. The prototype's current section lists use an older nine-pattern set].
+- **FR-002**: The system MUST provide a recommended section list for each of the four page types, each section mapped to one approved pattern with at least one variant. The approved patterns are the thirteen in `src/app/patterns/README.md`: Overview Cards, Accent Cards, Graphic Cards, Horizontal Cards, External Link Cards, Bullet Image, Text Media, Expanded Text, Longform Text, Hero Primary, Hero Secondary, Two-Col Form, Promo Banner Card. Pattern and variant names follow that document. Recommended sections per page type are listed under "Recommended Sections" below. Hero Primary is used only on Business Page.
 - **FR-003**: The system MUST mark required sections and prevent their removal.
 - **FR-004**: Step 1 MUST keep Single page as the only available scope; Multi-page set MUST show as unavailable.
 - **FR-005**: The system MUST capture the seven brief fields and require Audience to continue.
@@ -129,7 +129,22 @@ At Step 6 the user generates a mock example of the page, stacked from the patter
 - **FR-012**: The system MUST export the mock page as a single standalone HTML file with the SVGs included.
 - **FR-013**: The system MUST show Figma export as unavailable ("v2") and MUST NOT attempt it.
 - **FR-014**: Page type, brief, pasted text, and sections MUST be preserved when navigating back and forward between steps.
-- **FR-015**: The Blog page type MUST have a recommended section list [NEEDS CLARIFICATION: Blog starts as a copy of the Article list per the assumption below; confirm or give the Blog sections].
+- **FR-015**: The Blog page type MUST have a recommended section list. For v0.1.1 it is the same as Article's.
+
+### Recommended Sections
+
+First draft, approved for v0.1.1 and open to adjustment in later versions. **R** = required (cannot be removed). Each section uses the pattern in the second column; the variant defaults to the first documented variant and can be changed in Step 5.
+
+| # | Business Page | Article | Blog | Services |
+|---|---|---|---|---|
+| 1 | Hero Primary **R** | Hero Secondary **R** | Hero Secondary **R** | Hero Secondary **R** |
+| 2 | Overview Cards | Longform Text **R** | Longform Text **R** | Graphic Cards **R** |
+| 3 | Text Media | Text Media | Text Media | Text Media |
+| 4 | Accent Cards **R** | Horizontal Cards | Horizontal Cards | Two-Col Form |
+| 5 | Promo Banner Card | External Link Cards | External Link Cards | Accent Cards |
+| 6 | Two-Col Form **R** | Accent Cards **R** | Accent Cards **R** | Promo Banner Card **R** |
+
+Notes: Accent Cards stands in for the earlier "Author bio" section on Article and Blog. Bullet Image and Expanded Text are not in any recommended list and are available through Add section.
 
 ### Key Entities
 
@@ -161,6 +176,9 @@ At Step 6 the user generates a mock example of the page, stacked from the patter
 - Pattern SVGs are static, with placeholder text baked in. The mock page does not show the brief or hero content in v0.1.1. Tagged text slots that swap in user content are a later version.
 - Pattern SVGs are approximations for demonstration; matching the production component library is out of scope.
 - The mock is a wireframe-level view of structure and variant choice, not a rendering of the user's content.
-- Blog starts as a copy of the Article section list until real Blog sections are defined.
+- Blog uses the Article section list until real Blog sections are defined.
+- Add section offers removed recommended sections plus patterns not in the recommended list, and never offers Hero Primary outside Business Page.
+- The mock is built and reviewed one page type at a time: Business Page first, then Article (with Blog, which shares its list), then Services.
+- Versioning: one spec folder per release. When a release starts bundling several independent features, switch to one folder per feature with git tags marking releases. A `v0.1.1` git tag is added when this release ships.
 - The plugin plus skills structure (intake, architecture, customize, generate) remains the direction; v0.1.1 delivers it as the single prototype UI, not as separate skills.
 - Single user, single session; nothing is saved between sessions.

@@ -108,13 +108,25 @@ src/app/
 
 | Where | Change |
 |-------|--------|
-| Page type list and section templates | Replace Bio with Blog (copy of Article sections); no Search Results |
-| Pattern set | Replace the prototype's nine patterns with the thirteen documented ones, and re-map each page type's sections to them [NEEDS CLARIFICATION: mapping not yet decided] |
+| Page type list and section templates | Replace Bio with Blog (same sections as Article); no Search Results |
+| Pattern set | Replace the prototype's nine patterns with the thirteen documented ones, and re-map each page type's sections to them using the "Recommended Sections" table in the spec. Hero Primary appears only on Business Page |
 | Steps 4 and 5 | Variant lists come from the registry, not hardcoded arrays |
 | Step 3 | Replace upload zone with paste-brief control and text area; hold pasted text in app state |
 | Step 5 | Wire Add section to the approved sections not currently on the page |
 | Step 6 | Replace "Page spec ready" confirmation with Generate, mock page view (stacked SVGs), Export HTML, and a disabled "Figma (v2)" option |
 | App state | Add pasted brief text; keep it across step navigation |
+
+## Build Order
+
+Build and review the mock one page type at a time, so the SVGs you draw and the section lists are checked against a real page before moving on:
+
+1. Business Page (Hero Primary, Overview Cards, Text Media, Accent Cards, Promo Banner Card, Two-Col Form)
+2. Article, and Blog with it (adds Hero Secondary, Longform Text, Horizontal Cards, External Link Cards)
+3. Services (adds Graphic Cards)
+
+## Versioning
+
+Option A: one spec folder per release (`001-page-builder-v0-1-1`, later `002-page-builder-v0-2-0`). v0.1.1 is one cohesive release. Switch to one folder per feature, with git tags marking releases, when a release starts bundling several independent features. Add a `v0.1.1` git tag when it ships.
 
 ## Later Versions (not in this plan)
 
