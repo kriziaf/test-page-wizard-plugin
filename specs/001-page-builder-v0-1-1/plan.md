@@ -6,7 +6,7 @@
 
 ## Summary
 
-Bring the existing v0.1 prototype in line with the spec: four page types, a paste-in text brief, a working Add section, the thirteen documented patterns registered from a folder of SVGs, and a Generate step that stacks those SVGs into a mock page and exports it as standalone HTML. Figma export is shown as v2 only.
+Bring the existing v0.1 prototype in line with the spec: four page types, a paste-in text brief, a working Add section, the fourteen patterns (thirteen documented plus Highlight Band) registered from a folder of SVGs, and a Generate step that stacks those SVGs into a mock page and exports it as standalone HTML. Figma export is shown as v2 only.
 
 ## Technical Context
 
@@ -26,7 +26,7 @@ Bring the existing v0.1 prototype in line with the spec: four page types, a past
 
 **Constraints**: Exported HTML makes no external requests (inline SVG, minimal inline CSS)
 
-**Scale/Scope**: Four page types, nine patterns, one user, one session
+**Scale/Scope**: Four page types, fourteen patterns, one user, one session
 
 ## Constitution Check
 
@@ -66,7 +66,7 @@ Source of truth for pattern names, variants, and guidance: `src/app/patterns/REA
 | two-col-form | `subtle`, `brand` |
 | promo-banner-card | `image-led-brand`, `image-led-subtle`, `branded-cta`, `simple-cta` |
 
-That is 41 SVGs (fourteen patterns, counting Highlight Band, the stats band added after the thirteen documented ones; it has no entry in `README.md` yet). Card pattern variants (overview, accent, graphic, horizontal, external link) are not in the pattern documentation, so their names describe the drawings the owner made. Longform Text is not yet drawn.
+That is 41 SVGs (fourteen patterns, counting Highlight Band, the stats band added after the thirteen documented ones; it has no entry in `README.md` yet). Card pattern variants (overview, accent, graphic, horizontal, external link) are not in the pattern documentation, so their names describe the drawings the owner made.
 
 Variant naming rule: where a pattern has a gray treatment and a tinted-green treatment, they are called `subtle` (gray) and `brand` (tinted green).
 
@@ -115,7 +115,7 @@ src/app/
 | Where | Change |
 |-------|--------|
 | Page type list and section templates | Replace Bio with Blog (same sections as Article); no Search Results |
-| Pattern set | Replace the prototype's nine patterns with the thirteen documented ones, and re-map each page type's sections to them using the "Recommended Sections" table in the spec. Hero Primary appears only on Business Page |
+| Pattern set | Replace the prototype's nine patterns with the fourteen (thirteen documented plus Highlight Band), and re-map each page type's sections to them using the "Recommended Sections" table in the spec. Hero Primary appears on Business Page and Services only |
 | Steps 4 and 5 | Variant lists come from the registry, not hardcoded arrays |
 | Step 3 | Replace upload zone with paste-brief control and text area; hold pasted text in app state |
 | Step 5 | Wire Add section to the approved sections not currently on the page |
@@ -152,9 +152,11 @@ Drawings are 80 KB to 2 MB each because text is converted to outlines and two pr
 
 Build and review the mock one page type at a time, so the SVGs you draw and the section lists are checked against a real page before moving on:
 
-1. Business Page (Hero Primary, Overview Cards, Text Media, Accent Cards, Promo Banner Card, Two-Col Form)
-2. Article, and Blog with it (adds Hero Secondary, Longform Text, Horizontal Cards, External Link Cards)
-3. Services (adds Graphic Cards)
+1. Services (Hero Primary, External Link Cards, Expanded Text, Text Media, Accent Cards, Promo Banner Card, Two-Col Form), checked against the four reference templates
+2. Business Page (Hero Primary, Overview Cards, Text Media, Accent Cards, Promo Banner Card, Two-Col Form)
+3. Article, and Blog with it (adds Hero Secondary, Longform Text, Horizontal Cards, External Link Cards)
+
+Graphic Cards is parked; it is available through Add section on Services.
 
 ## Versioning
 

@@ -116,7 +116,7 @@ At Step 6 the user generates a mock example of the page, stacked from the patter
 ### Functional Requirements
 
 - **FR-001**: The system MUST offer exactly four page types in Step 2: Business Page, Article, Blog, Services. Bio is removed. Search Results is not offered in v0.1.1.
-- **FR-002**: The system MUST provide a recommended section list for each of the four page types, each section mapped to one approved pattern with at least one variant. The approved patterns are the thirteen in `src/app/patterns/README.md`: Overview Cards, Accent Cards, Graphic Cards, Horizontal Cards, External Link Cards, Bullet Image, Text Media, Expanded Text, Longform Text, Hero Primary, Hero Secondary, Two-Col Form, Promo Banner Card. Pattern and variant names follow that document. Recommended sections per page type are listed under "Recommended Sections" below. Hero Primary is used only on Business Page.
+- **FR-002**: The system MUST provide a recommended section list for each of the four page types, each section mapped to one approved pattern with at least one variant. The approved patterns are the thirteen in `src/app/patterns/README.md`: Overview Cards, Accent Cards, Graphic Cards, Horizontal Cards, External Link Cards, Bullet Image, Text Media, Expanded Text, Longform Text, Hero Primary, Hero Secondary, Two-Col Form, Promo Banner Card. Pattern and variant names follow that document. Recommended sections per page type are listed under "Recommended Sections" below. Hero Primary is used on Business Page and Services only. Highlight Band (stats band, `subtle` and `brand`) is a fourteenth pattern added after the documented set; its documentation is not yet written.
 - **FR-003**: The system MUST mark required sections and prevent their removal.
 - **FR-004**: Step 1 MUST keep Single page as the only available scope; Multi-page set MUST show as unavailable.
 - **FR-005**: The system MUST capture the seven brief fields and require Audience to continue.
@@ -137,20 +137,21 @@ First draft, approved for v0.1.1 and open to adjustment in later versions. **R**
 
 | # | Business Page | Article | Blog | Services |
 |---|---|---|---|---|
-| 1 | Hero Primary **R** | Hero Secondary **R** | Hero Secondary **R** | Hero Secondary **R** |
-| 2 | Overview Cards | Longform Text **R** | Longform Text **R** | Graphic Cards **R** |
-| 3 | Text Media | Text Media | Text Media | Text Media |
-| 4 | Accent Cards **R** | Horizontal Cards | Horizontal Cards | Two-Col Form |
+| 1 | Hero Primary **R** | Hero Secondary **R** | Hero Secondary **R** | Hero Primary **R** |
+| 2 | Overview Cards | Longform Text **R** | Longform Text **R** | External Link Cards |
+| 3 | Text Media | Text Media | Text Media | Expanded Text |
+| 4 | Accent Cards **R** | Horizontal Cards | Horizontal Cards | Text Media |
 | 5 | Promo Banner Card | External Link Cards | External Link Cards | Accent Cards |
 | 6 | Two-Col Form **R** | Accent Cards **R** | Accent Cards **R** | Promo Banner Card **R** |
+| 7 | | | | Two-Col Form |
 
-Notes: Accent Cards stands in for the earlier "Author bio" section on Article and Blog. Bullet Image and Expanded Text are not in any recommended list and are available through Add section.
+Notes: Services was validated against the four reference templates in `src/app/patterns/templates/services-page/`, which end with a branded CTA banner (Promo Banner Card `branded-cta`) and a Two-Col Form. Graphic Cards is parked for Services and available through Add section. Accent Cards stands in for the earlier "Author bio" section on Article and Blog. Bullet Image, Highlight Band and Graphic Cards (on Services) are not in a recommended list and are available through Add section. Expanded Text is recommended on Services only.
 
 ### Key Entities
 
 - **Page type**: One of four templates; determines the starting section list.
 - **Section**: A named block on the page mapped to a pattern; has a selected variant, an order position, and a required flag.
-- **Pattern**: An approved building block (thirteen kinds, documented in `src/app/patterns/README.md`) with named variants.
+- **Pattern**: An approved building block (fourteen kinds; thirteen documented in `src/app/patterns/README.md`, plus Highlight Band) with named variants.
 - **Pattern SVG**: A wireframe-style drawing of one pattern variant, supplied by the project owner. It is the only visual used for that variant in the mock page. Not a production component.
 - **Content brief**: Seven text fields plus an optional pasted text brief.
 - **Generated page**: The mock page produced from page type, brief, and sections, and its HTML export.
@@ -174,13 +175,13 @@ Notes: Accent Cards stands in for the earlier "Author bio" section on Article an
 - Multi-page sets, Search Results, Primary Care at Home, and Figma export via Figma MCP are deferred to later versions.
 - Pattern SVGs are drawn by the project owner and bundled with the tool; users cannot upload their own SVGs in v0.1.1.
 - Pattern SVGs are static, with placeholder text baked in. The mock page does not show the brief or hero content in v0.1.1. Tagged text slots that swap in user content are a later version.
-- Longform Text has no drawings yet and is parked. Until it is drawn, sections using it render as labeled placeholder blocks.
+- Longform Text has mock drawings (plain text on white) in place of final ones. The owner replaces them in place, keeping the file names.
 - Image areas in Text Media, Bullet Image, and Overview Cards (stacked-right) show a neutral mock image drawn into the SVG.
 - Pattern SVGs are approximations for demonstration; matching the production component library is out of scope.
 - The mock is a wireframe-level view of structure and variant choice, not a rendering of the user's content.
 - Blog uses the Article section list until real Blog sections are defined.
-- Add section offers removed recommended sections plus patterns not in the recommended list, and never offers Hero Primary outside Business Page.
-- The mock is built and reviewed one page type at a time: Business Page first, then Article (with Blog, which shares its list), then Services.
+- Add section offers removed recommended sections plus patterns not in the recommended list, and never offers Hero Primary outside Business Page and Services.
+- The mock is built and reviewed one page type at a time: Services first (validated against the reference templates), then Business Page, then Article (with Blog, which shares its list).
 - Versioning: one spec folder per release. When a release starts bundling several independent features, switch to one folder per feature with git tags marking releases. A `v0.1.1` git tag is added when this release ships.
 - The plugin plus skills structure (intake, architecture, customize, generate) remains the direction; v0.1.1 delivers it as the single prototype UI, not as separate skills.
 - Single user, single session; nothing is saved between sessions.
