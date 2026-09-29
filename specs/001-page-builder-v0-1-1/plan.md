@@ -61,7 +61,7 @@ Source of truth for pattern names, variants, and guidance: `src/app/patterns/REA
 | expanded-text | `centered-2-col`, `split-1-col`, `centered-3-col`, `split-2-col` |
 | longform-text | `paragraph`, `bullet-list`, `resource-list` |
 | hero-primary | `image-overlay`, `form-image`, `split-media` |
-| hero-secondary | `brand-teal`, `bright-green`, `subtle` |
+| hero-secondary | `brand-strong`, `bright-green`, `subtle` |
 | two-col-form | `subtle`, `brand` |
 | promo-banner-card | `image-led-brand`, `image-led-subtle`, `branded-cta`, `simple-cta` |
 
@@ -140,7 +140,7 @@ Drawings are 80 KB to 2 MB each because text is converted to outlines and two pr
 - Optimize only when building the export, not the source files.
 - Use SVGO with ID prefixing per file. Its default ID minifying would make IDs collide when several SVGs are inlined into one HTML file. (The current files have unique IDs, so nothing collides today.)
 - Check the optimized output looks identical before relying on it.
-- Embedded photos are the bigger weight. Hero Secondary `subtle` is 23 MB, `brand-teal` 12 MB and Hero Primary `split-media` 10 MB, because each embeds 4096 px photos (up to 8 MB each) shown at about 500 px wide. SVGO does not shrink embedded photos. At export, downscale each embedded image to about twice its displayed width and recompress it (keeping transparency for the cut-out portraits). Sources stay untouched.
+- Embedded photos are the bigger weight. Hero Secondary `subtle` is 23 MB, `brand-strong` 12 MB and Hero Primary `split-media` 10 MB, because each embeds 4096 px photos (up to 8 MB each) shown at about 500 px wide. SVGO does not shrink embedded photos. At export, downscale each embedded image to about twice its displayed width and recompress it (keeping transparency for the cut-out portraits). Sources stay untouched. Prototype: `scripts/shrink-embedded-images.py <in.svg> <out.svg> [maxWidth=1200]`. On a copy, `split-media` went 10.1 MB to 0.3 MB, `brand-strong` 12.0 MB to 1.9 MB and `subtle` 23.1 MB to 4.0 MB, with a mean pixel difference of 0.05/255 on `subtle` when rendered at 1440 px.
 - Text stays as outlines, so text swapping (option B) remains a later redraw or re-export job.
 
 ## Reference Templates
