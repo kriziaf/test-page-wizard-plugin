@@ -1,0 +1,1955 @@
+import { useState, useCallback } from "react";
+import { Check, Lock, ChevronUp, ChevronDown, Trash2, Plus, Upload, Zap } from "lucide-react";
+
+// ── Types ────────────────────────────────────────────────────────────────
+type PageType = "business" | "article" | "bio" | "services";
+
+type SectionPattern =
+  | "hero"
+  | "accent-cards"
+  | "overview-cards"
+  | "graphic-cards"
+  | "external-link-cards"
+  | "text-media"
+  | "expanded-text"
+  | "form"
+  | "promo-banner";
+
+interface PageSection {
+  id: string;
+  name: string;
+  pattern: SectionPattern;
+  description: string;
+  required?: boolean;
+  variant: string;
+  variants: string[];
+}
+
+interface ContentBrief {
+  audience: string;
+  serviceLine: string;
+  pageGoal: string;
+  primaryAction: string;
+  secondaryAction: string;
+  requiredContent: string;
+  existingCopy: string;
+}
+
+// ── Static data ──────────────────────────────────────────────────────────
+const STEP_META = [
+  { num: 1, title: "Scope", locked: true },
+  { num: 2, title: "Page type", locked: false },
+  { num: 3, title: "Content brief", locked: false },
+  { num: 4, title: "Architecture", locked: false },
+  { num: 5, title: "Review", locked: false },
+  { num: 6, title: "Generate", locked: false },
+];
+
+const PAGE_TYPES: { id: PageType; name: string; desc: string; icon: string }[] = [
+  {
+    id: "business",
+    name: "Business Page",
+    desc: "Brand homepage, product page, or corporate overview",
+    icon: "◈",
+  },
+  {
+    id: "article",
+    name: "Article Page",
+    desc: "News story, thought leadership, or editorial content",
+    icon: "◎",
+  },
+  {
+    id: "bio",
+    name: "Bio Page",
+    desc: "Individual profile, leadership team member, or author page",
+    icon: "◉",
+  },
+  {
+    id: "services",
+    name: "Services Page",
+    desc: "Service catalog, specialty area, or product line overview",
+    icon: "◐",
+  },
+];
+
+const PATTERN_META: Record<
+  SectionPattern,
+  { label: string; color: string; bg: string }
+> = {
+  hero: { label: "Hero", color: "#0033ff", bg: "#e8eeff" },
+  "accent-cards": { label: "Accent cards", color: "#7a3fff", bg: "#f0e8ff" },
+  "overview-cards": {
+    label: "Overview cards",
+    color: "#0077aa",
+    bg: "#e0f4ff",
+  },
+  "graphic-cards": {
+    label: "Graphic cards",
+    color: "#00885a",
+    bg: "#e0f5ee",
+  },
+  "external-link-cards": {
+    label: "External link cards",
+    color: "#885500",
+    bg: "#fff3e0",
+  },
+  "text-media": { label: "Text / media", color: "#555", bg: "#f0eeec" },
+  "expanded-text": { label: "Expanded text", color: "#555", bg: "#f0eeec" },
+  form: { label: "Form", color: "#cc2200", bg: "#fff0ee" },
+  "promo-banner": { label: "Promo banner", color: "#007755", bg: "#e0fff5" },
+};
+
+const SECTIONS_BY_TYPE: Record<
+  PageType,
+  Omit<PageSection, "variant">[]
+> = {
+  business: [
+    {
+      id: "b1",
+      name: "Brand hero",
+      pattern: "hero",
+      description: "Main headline, sub-copy, primary CTA, and supporting visual",
+      required: true,
+      variants: ["Full-bleed image", "Split layout", "Video background"],
+    },
+    {
+      id: "b2",
+      name: "Entry points",
+      pattern: "overview-cards",
+      description: "3–4 cards linking to key product or service areas",
+      variants: ["3-up grid", "4-up grid", "Horizontal scroll"],
+    },
+    {
+      id: "b3",
+      name: "Feature overview",
+      pattern: "text-media",
+      description: "Primary service or product highlight with supporting visual",
+      variants: ["Image right", "Image left", "Stacked"],
+    },
+    {
+      id: "b4",
+      name: "Key metrics",
+      pattern: "accent-cards",
+      description: "3–5 stat tiles establishing trust and scale",
+      required: true,
+      variants: ["3-column", "4-column", "Row with icons"],
+    },
+    {
+      id: "b5",
+      name: "Promo strip",
+      pattern: "promo-banner",
+      description: "Seasonal campaign or cross-sell promotion",
+      variants: ["Full-width color", "Image-backed", "Minimal text"],
+    },
+    {
+      id: "b6",
+      name: "Final action",
+      pattern: "text-media",
+      description: "Closing CTA module with supporting copy",
+      required: true,
+      variants: ["Centered", "Split", "Form inline"],
+    },
+  ],
+  article: [
+    {
+      id: "a1",
+      name: "Article hero",
+      pattern: "hero",
+      description: "Headline, byline, publication date, and lead image",
+      required: true,
+      variants: ["Full-bleed", "Compact", "Pull-quote lead"],
+    },
+    {
+      id: "a2",
+      name: "Lead body text",
+      pattern: "expanded-text",
+      description: "Opening paragraphs establishing context and voice",
+      required: true,
+      variants: ["Single column", "With pull quote", "With sidebar"],
+    },
+    {
+      id: "a3",
+      name: "Text + media",
+      pattern: "text-media",
+      description: "Inline images, charts, or video with surrounding copy",
+      variants: ["Image inline", "Fullwidth break", "Video embed"],
+    },
+    {
+      id: "a4",
+      name: "Related links",
+      pattern: "external-link-cards",
+      description: "2–3 curated external or internal resources",
+      variants: ["2-up row", "3-up row", "Compact list"],
+    },
+    {
+      id: "a5",
+      name: "Author bio",
+      pattern: "accent-cards",
+      description: "Compact author profile card",
+      required: true,
+      variants: ["With avatar", "Text only", "Expanded"],
+    },
+  ],
+  bio: [
+    {
+      id: "p1",
+      name: "Profile hero",
+      pattern: "hero",
+      description: "Headshot, name, title, and primary contact CTA",
+      required: true,
+      variants: ["Photo left", "Photo centered", "Cover image"],
+    },
+    {
+      id: "p2",
+      name: "About summary",
+      pattern: "expanded-text",
+      description: "Short bio paragraph with key credentials",
+      required: true,
+      variants: ["Single column", "With highlights", "Pull quote"],
+    },
+    {
+      id: "p3",
+      name: "Experience",
+      pattern: "text-media",
+      description: "Role history with logos or timeline visual",
+      variants: ["Logos", "Timeline", "Text list"],
+    },
+    {
+      id: "p4",
+      name: "Skills & expertise",
+      pattern: "accent-cards",
+      description: "Tag-style skill or expertise category cards",
+      variants: ["Tag cloud", "2-column list", "3-up cards"],
+    },
+    {
+      id: "p5",
+      name: "Contact",
+      pattern: "form",
+      description: "Simple contact or inquiry form",
+      required: true,
+      variants: ["Minimal 3-field", "Full form", "CTA button only"],
+    },
+  ],
+  services: [
+    {
+      id: "s1",
+      name: "Services hero",
+      pattern: "hero",
+      description: "Services headline and positioning statement",
+      required: true,
+      variants: ["Full-bleed", "Split with visual", "Compact"],
+    },
+    {
+      id: "s2",
+      name: "Service cards",
+      pattern: "graphic-cards",
+      description: "3–4 service offerings with icons or imagery",
+      required: true,
+      variants: ["3-up icons", "4-up with images", "2-up large"],
+    },
+    {
+      id: "s3",
+      name: "Service detail",
+      pattern: "text-media",
+      description: "Primary service deep-dive with supporting visual",
+      variants: ["Image right", "Image left", "No image"],
+    },
+    {
+      id: "s4",
+      name: "Inquiry form",
+      pattern: "form",
+      description: "Lead capture or service request form",
+      variants: ["Inline simple", "Modal trigger", "Multi-step"],
+    },
+    {
+      id: "s5",
+      name: "Trust proof",
+      pattern: "accent-cards",
+      description: "Client logos, testimonials, or certification badges",
+      variants: ["Logo row", "Testimonial cards", "Stats + logos"],
+    },
+    {
+      id: "s6",
+      name: "Final CTA",
+      pattern: "promo-banner",
+      description: "Closing promotional action strip",
+      required: true,
+      variants: ["Full-width color", "Bordered", "Dark"],
+    },
+  ],
+};
+
+function initSections(type: PageType): PageSection[] {
+  return SECTIONS_BY_TYPE[type].map((s) => ({ ...s, variant: s.variants[0] }));
+}
+
+// ── Step sidebar ──────────────────────────────────────────────────────────
+function Sidebar({
+  step,
+  completed,
+  onNavigate,
+}: {
+  step: number;
+  completed: Set<number>;
+  onNavigate: (s: number) => void;
+}) {
+  return (
+    <aside
+      className="flex w-[216px] shrink-0 flex-col"
+      style={{
+        background: "#111",
+        borderRight: "1px solid rgba(255,255,255,0.06)",
+      }}
+    >
+      {/* Identity */}
+      <div className="px-5 py-5">
+        <div
+          className="mb-1 text-[10px] font-medium uppercase tracking-widest"
+          style={{ fontFamily: "'DM Mono', monospace", color: "#3a3a3a" }}
+        >
+          Page Builder
+        </div>
+        <div className="text-[13px] font-semibold" style={{ color: "#d0cdc9" }}>
+          Spec plan
+        </div>
+      </div>
+
+      {/* Steps */}
+      <nav className="flex-1 px-3">
+        {STEP_META.map((s) => {
+          const isActive = step === s.num;
+          const isDone = completed.has(s.num);
+          const canNav = isDone || s.num < step;
+          return (
+            <button
+              key={s.num}
+              onClick={() => canNav && onNavigate(s.num)}
+              className="flex w-full items-center gap-3 rounded-lg px-3 py-2.5 text-left transition-all"
+              style={{
+                cursor: canNav ? "pointer" : "default",
+                background: isActive
+                  ? "rgba(255,255,255,0.07)"
+                  : "transparent",
+              }}
+            >
+              <span
+                className="flex h-[22px] w-[22px] shrink-0 items-center justify-center rounded-full text-[10px]"
+                style={{
+                  fontFamily: "'DM Mono', monospace",
+                  background: isDone
+                    ? "#00885a"
+                    : isActive
+                      ? "#0033ff"
+                      : "rgba(255,255,255,0.05)",
+                  color: isDone || isActive ? "#fff" : "#484848",
+                }}
+              >
+                {isDone ? (
+                  <Check size={10} strokeWidth={2.5} />
+                ) : (
+                  s.num
+                )}
+              </span>
+              <span
+                className="flex-1 text-[12.5px] font-medium"
+                style={{
+                  color: isActive ? "#f0eeeb" : isDone ? "#777" : "#3a3a3a",
+                }}
+              >
+                {s.title}
+              </span>
+              {s.locked && (
+                <Lock size={10} style={{ color: "#3a3a3a" }} />
+              )}
+            </button>
+          );
+        })}
+      </nav>
+
+      {/* Progress */}
+      <div className="px-5 pb-5 pt-3">
+        <div
+          className="mb-2 flex justify-between text-[10px]"
+          style={{ fontFamily: "'DM Mono', monospace", color: "#3a3a3a" }}
+        >
+          <span>Progress</span>
+          <span>{Math.round((completed.size / 6) * 100)}%</span>
+        </div>
+        <div
+          className="h-[3px] w-full overflow-hidden rounded-full"
+          style={{ background: "rgba(255,255,255,0.06)" }}
+        >
+          <div
+            className="h-full rounded-full transition-all duration-500"
+            style={{
+              width: `${(completed.size / 6) * 100}%`,
+              background: "#0033ff",
+            }}
+          />
+        </div>
+      </div>
+    </aside>
+  );
+}
+
+// ── Shared step header ────────────────────────────────────────────────────
+function StepHeader({
+  num,
+  title,
+  desc,
+}: {
+  num: string;
+  title: string;
+  desc: string;
+}) {
+  return (
+    <div className="mb-8">
+      <div
+        className="mb-2 text-[10.5px] font-medium uppercase tracking-widest"
+        style={{ fontFamily: "'DM Mono', monospace", color: "#0033ff" }}
+      >
+        Step {num}
+      </div>
+      <h2
+        className="mb-2 text-[21px] font-semibold"
+        style={{ color: "#1a1a1a" }}
+      >
+        {title}
+      </h2>
+      <p className="text-[13.5px] leading-relaxed" style={{ color: "#888" }}>
+        {desc}
+      </p>
+    </div>
+  );
+}
+
+// ── Step 1: Scope ─────────────────────────────────────────────────────────
+function Step1() {
+  return (
+    <div className="mx-auto max-w-[640px] px-6 py-10">
+      <StepHeader
+        num="01"
+        title="Choose scope"
+        desc="Define whether you're building a single page or a coordinated multi-page set."
+      />
+
+      <div className="grid grid-cols-2 gap-4">
+        {[
+          {
+            label: "Single page",
+            desc: "One standalone page built to the full spec and pattern library.",
+          },
+          {
+            label: "Multi-page set",
+            desc: "A coordinated set of pages sharing structure, patterns, and navigation.",
+          },
+        ].map((opt) => (
+          <div
+            key={opt.label}
+            className="relative overflow-hidden rounded-2xl p-5"
+            style={{
+              border: "1px solid rgba(0,0,0,0.08)",
+              background: "#faf9f7",
+              opacity: 0.42,
+              cursor: "not-allowed",
+            }}
+          >
+            <span
+              className="absolute right-3 top-3 inline-flex items-center gap-1 rounded-full px-2 py-0.5 text-[9.5px] font-medium"
+              style={{
+                fontFamily: "'DM Mono', monospace",
+                background: "#eceae7",
+                color: "#aaa",
+              }}
+            >
+              <Lock size={8} />
+              Coming soon
+            </span>
+            <div
+              className="mb-1 text-[15px] font-semibold"
+              style={{ color: "#1a1a1a" }}
+            >
+              {opt.label}
+            </div>
+            <div className="text-[13px]" style={{ color: "#888" }}>
+              {opt.desc}
+            </div>
+          </div>
+        ))}
+      </div>
+
+      <p
+        className="mt-5 text-[12.5px] leading-relaxed"
+        style={{ color: "#b0aca8" }}
+      >
+        Scope selection will be enabled in a future version. Continue to
+        proceed with a single-page build.
+      </p>
+    </div>
+  );
+}
+
+// ── Step 2: Page type ─────────────────────────────────────────────────────
+function Step2({
+  pageType,
+  setPageType,
+}: {
+  pageType: PageType | null;
+  setPageType: (t: PageType) => void;
+}) {
+  return (
+    <div className="mx-auto max-w-[640px] px-6 py-10">
+      <StepHeader
+        num="02"
+        title="Choose page type"
+        desc="Select the type of page you're building. This determines the recommended section architecture in step 4."
+      />
+
+      <div className="grid grid-cols-2 gap-3.5">
+        {PAGE_TYPES.map((pt) => {
+          const isSelected = pageType === pt.id;
+          return (
+            <button
+              key={pt.id}
+              onClick={() => setPageType(pt.id)}
+              className="relative rounded-2xl p-5 text-left transition-all"
+              style={{
+                border: isSelected
+                  ? "2px solid #0033ff"
+                  : "1px solid rgba(0,0,0,0.09)",
+                background: isSelected ? "#f5f7ff" : "#fff",
+                cursor: "pointer",
+                outline: "none",
+              }}
+            >
+              {isSelected && (
+                <span
+                  className="absolute right-4 top-4 flex h-5 w-5 items-center justify-center rounded-full"
+                  style={{ background: "#0033ff" }}
+                >
+                  <Check size={11} color="#fff" strokeWidth={2.5} />
+                </span>
+              )}
+              <span
+                className="mb-3 block text-[22px]"
+                style={{ lineHeight: 1 }}
+              >
+                {pt.icon}
+              </span>
+              <div
+                className="mb-1 text-[14.5px] font-semibold"
+                style={{ color: isSelected ? "#0033ff" : "#1a1a1a" }}
+              >
+                {pt.name}
+              </div>
+              <div className="text-[12.5px]" style={{ color: "#888" }}>
+                {pt.desc}
+              </div>
+            </button>
+          );
+        })}
+      </div>
+    </div>
+  );
+}
+
+// ── Step 3: Content brief ─────────────────────────────────────────────────
+function BriefField({
+  label,
+  hint,
+  value,
+  onChange,
+  multiline = false,
+}: {
+  label: string;
+  hint: string;
+  value: string;
+  onChange: (
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
+  ) => void;
+  multiline?: boolean;
+}) {
+  const base: React.CSSProperties = {
+    width: "100%",
+    fontSize: "13.5px",
+    color: "#1a1a1a",
+    border: "1px solid rgba(0,0,0,0.1)",
+    borderRadius: "10px",
+    padding: "9px 12px",
+    background: "#fff",
+    outline: "none",
+    fontFamily: "'Figtree', system-ui, sans-serif",
+    resize: "none",
+  };
+  return (
+    <div>
+      <label
+        className="mb-0.5 block text-[12.5px] font-semibold"
+        style={{ color: "#1a1a1a" }}
+      >
+        {label}
+      </label>
+      <p className="mb-1.5 text-[11.5px]" style={{ color: "#b0aca8" }}>
+        {hint}
+      </p>
+      {multiline ? (
+        <textarea rows={3} value={value} onChange={onChange} style={base} />
+      ) : (
+        <input type="text" value={value} onChange={onChange} style={base} />
+      )}
+    </div>
+  );
+}
+
+function Step3({
+  brief,
+  setBrief,
+}: {
+  brief: ContentBrief;
+  setBrief: (b: ContentBrief) => void;
+}) {
+  const set =
+    (key: keyof ContentBrief) =>
+    (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) =>
+      setBrief({ ...brief, [key]: e.target.value });
+
+  return (
+    <div className="mx-auto max-w-[640px] px-6 py-10">
+      <StepHeader
+        num="03"
+        title="Create the content brief"
+        desc="Define the page audience, goal, and content inputs. Fill in these fields or upload an existing brief document."
+      />
+
+      {/* Upload zone */}
+      <div
+        className="mb-6 flex cursor-pointer items-center justify-center gap-2.5 rounded-xl py-4 transition-colors hover:bg-white"
+        style={{ border: "1.5px dashed rgba(0,0,0,0.11)", background: "#faf9f7" }}
+      >
+        <Upload size={14} style={{ color: "#c0bbb7" }} />
+        <span className="text-[13px]" style={{ color: "#c0bbb7" }}>
+          Upload brief document
+          <span className="ml-1.5" style={{ color: "#d8d4d0" }}>
+            · .doc .docx .pdf .txt
+          </span>
+        </span>
+      </div>
+
+      <div className="space-y-4">
+        <BriefField
+          label="3.1 Audience"
+          hint="Who is this page for? Include plan type, life stage, or segment."
+          value={brief.audience}
+          onChange={set("audience")}
+        />
+        <BriefField
+          label="3.2 Service line"
+          hint="Which product, plan, or service area does this page cover?"
+          value={brief.serviceLine}
+          onChange={set("serviceLine")}
+        />
+        <BriefField
+          label="3.3 Page goal"
+          hint="What should visitors do or understand after viewing this page?"
+          value={brief.pageGoal}
+          onChange={set("pageGoal")}
+          multiline
+        />
+        <div className="grid grid-cols-2 gap-3.5">
+          <BriefField
+            label="3.4 Primary action"
+            hint="e.g. Start a quote, Find a doctor"
+            value={brief.primaryAction}
+            onChange={set("primaryAction")}
+          />
+          <BriefField
+            label="Secondary action"
+            hint="e.g. Learn more, Compare plans"
+            value={brief.secondaryAction}
+            onChange={set("secondaryAction")}
+          />
+        </div>
+        <BriefField
+          label="3.5 Required content"
+          hint="Content, claims, or regulatory messaging that must appear on this page"
+          value={brief.requiredContent}
+          onChange={set("requiredContent")}
+          multiline
+        />
+        <BriefField
+          label="3.6 Existing copy or approved content source"
+          hint="Paste approved copy here, or note the source document and version"
+          value={brief.existingCopy}
+          onChange={set("existingCopy")}
+          multiline
+        />
+      </div>
+    </div>
+  );
+}
+
+// ── Step 4: Architecture ──────────────────────────────────────────────────
+interface HeroContent {
+  headline: string;
+  subheadline: string;
+  body: string;
+  primaryCta: string;
+  secondaryCta: string;
+}
+
+const DEFAULT_HERO: HeroContent = {
+  headline: "Support on your GLP-1 journey",
+  subheadline: "Evernorth EnGuide℠ Pharmacy",
+  body: "Held to the highest standards under the Evernorth® brand, our team of specially trained pharmacists are readily available to address your needs and work directly with your doctor to help you save money, discuss treatment options, and more.",
+  primaryCta: "Log in",
+  secondaryCta: "Learn more",
+};
+
+function HeroPreview({ content }: { content: HeroContent }) {
+  return (
+    <div className="overflow-hidden rounded-xl" style={{ background: "#111" }}>
+      <div className="px-5 py-7">
+        <div
+          className="mb-2 text-[9.5px] font-semibold uppercase tracking-widest"
+          style={{ fontFamily: "'DM Mono', monospace", color: "rgba(255,255,255,0.32)" }}
+        >
+          {content.subheadline || "Brand name"}
+        </div>
+        <h2
+          className="mb-3 text-[21px] font-bold leading-snug"
+          style={{ color: "#fff" }}
+        >
+          {content.headline || "Page headline"}
+        </h2>
+        <p
+          className="mb-5 text-[12px] leading-relaxed"
+          style={{ color: "rgba(255,255,255,0.52)", maxWidth: "320px" }}
+        >
+          {content.body || "Body copy goes here…"}
+        </p>
+        <div className="flex flex-wrap gap-2">
+          <span
+            className="inline-block rounded-full px-4 py-2 text-[12px] font-semibold text-white"
+            style={{ background: "#0033ff" }}
+          >
+            {content.primaryCta || "Primary CTA"}
+          </span>
+          {content.secondaryCta.trim() && (
+            <span
+              className="inline-block rounded-full px-4 py-2 text-[12px] font-semibold"
+              style={{ border: "1px solid rgba(255,255,255,0.18)", color: "rgba(255,255,255,0.6)" }}
+            >
+              {content.secondaryCta}
+            </span>
+          )}
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function ContentEditField({
+  label,
+  value,
+  onChange,
+  multiline = false,
+  placeholder = "",
+}: {
+  label: string;
+  value: string;
+  onChange: (v: string) => void;
+  multiline?: boolean;
+  placeholder?: string;
+}) {
+  const base: React.CSSProperties = {
+    width: "100%",
+    fontSize: "13px",
+    color: "#1a1a1a",
+    border: "1px solid rgba(0,0,0,0.1)",
+    borderRadius: "8px",
+    padding: "8px 10px",
+    background: "#fff",
+    outline: "none",
+    fontFamily: "'Figtree', system-ui, sans-serif",
+    resize: "none",
+    lineHeight: 1.5,
+  };
+  return (
+    <div>
+      <label
+        className="mb-1 block text-[10px] font-medium uppercase tracking-wide"
+        style={{ fontFamily: "'DM Mono', monospace", color: "#a09c98" }}
+      >
+        {label}
+      </label>
+      {multiline ? (
+        <textarea
+          rows={3}
+          value={value}
+          onChange={(e) => onChange(e.target.value)}
+          placeholder={placeholder}
+          style={base}
+        />
+      ) : (
+        <input
+          type="text"
+          value={value}
+          onChange={(e) => onChange(e.target.value)}
+          placeholder={placeholder}
+          style={base}
+        />
+      )}
+    </div>
+  );
+}
+
+function ContentPanel({
+  section,
+  heroContent,
+  setHeroContent,
+}: {
+  section: PageSection | null;
+  heroContent: HeroContent;
+  setHeroContent: (c: HeroContent) => void;
+}) {
+  const [saved, setSaved] = useState(false);
+
+  if (!section) {
+    return (
+      <div
+        className="flex flex-col items-center justify-center gap-3 rounded-2xl py-20 text-center"
+        style={{ border: "1.5px dashed rgba(0,0,0,0.09)" }}
+      >
+        <span className="text-[18px]" style={{ opacity: 0.18 }}>◈</span>
+        <p className="text-[12.5px]" style={{ color: "#c0bbb7" }}>
+          Select a section to preview and edit its content.
+        </p>
+      </div>
+    );
+  }
+
+  const pm = PATTERN_META[section.pattern];
+  const isHero = section.pattern === "hero";
+
+  const handleSave = () => {
+    setSaved(true);
+    setTimeout(() => setSaved(false), 2400);
+  };
+
+  const set = (key: keyof HeroContent) => (v: string) =>
+    setHeroContent({ ...heroContent, [key]: v });
+
+  return (
+    <div
+      className="overflow-hidden rounded-2xl"
+      style={{ border: "1px solid rgba(0,0,0,0.09)", background: "#faf9f7" }}
+    >
+      {/* Panel header */}
+      <div
+        className="flex shrink-0 items-center gap-2 px-4 py-3"
+        style={{ borderBottom: "1px solid rgba(0,0,0,0.08)", background: "#fff" }}
+      >
+        <span className="text-[13px] font-semibold" style={{ color: "#1a1a1a" }}>
+          {section.name}
+        </span>
+        <span
+          className="rounded-md px-1.5 py-0.5 text-[9.5px] font-medium"
+          style={{ fontFamily: "'DM Mono', monospace", background: pm.bg, color: pm.color }}
+        >
+          {pm.label}
+        </span>
+        {section.required && (
+          <span
+            className="text-[9.5px]"
+            style={{ fontFamily: "'DM Mono', monospace", color: "#ccc" }}
+          >
+            req.
+          </span>
+        )}
+      </div>
+
+      <div
+        className="overflow-y-auto"
+        style={{ maxHeight: "calc(100vh - 230px)", scrollbarWidth: "none" }}
+      >
+        {isHero ? (
+          <div className="space-y-4 p-4">
+            {/* Live preview */}
+            <div>
+              <div
+                className="mb-2 text-[9.5px] font-medium uppercase tracking-wide"
+                style={{ fontFamily: "'DM Mono', monospace", color: "#c0bbb7" }}
+              >
+                Live preview
+              </div>
+              <HeroPreview content={heroContent} />
+            </div>
+
+            <div style={{ borderTop: "1px solid rgba(0,0,0,0.07)" }} />
+
+            <div
+              className="text-[9.5px] font-medium uppercase tracking-wide"
+              style={{ fontFamily: "'DM Mono', monospace", color: "#c0bbb7" }}
+            >
+              Edit content
+            </div>
+
+            <ContentEditField
+              label="Headline"
+              value={heroContent.headline}
+              onChange={set("headline")}
+              placeholder="Page headline"
+            />
+            <ContentEditField
+              label="Sub-headline / Brand"
+              value={heroContent.subheadline}
+              onChange={set("subheadline")}
+              placeholder="Brand or category label"
+            />
+            <ContentEditField
+              label="Body copy"
+              value={heroContent.body}
+              onChange={set("body")}
+              multiline
+              placeholder="Supporting paragraph…"
+            />
+            <ContentEditField
+              label="Primary CTA"
+              value={heroContent.primaryCta}
+              onChange={set("primaryCta")}
+              placeholder="e.g. Log in"
+            />
+            <ContentEditField
+              label="Secondary CTA"
+              value={heroContent.secondaryCta}
+              onChange={set("secondaryCta")}
+              placeholder="e.g. Learn more (optional)"
+            />
+
+            <button
+              onClick={handleSave}
+              className="flex w-full cursor-pointer items-center justify-center gap-2 rounded-full py-2.5 text-[13px] font-semibold text-white transition-all duration-300"
+              style={{ background: saved ? "#00885a" : "#1a1a1a" }}
+            >
+              {saved ? "✓ Saved" : "Save content"}
+            </button>
+          </div>
+        ) : (
+          <div className="flex flex-col items-center justify-center gap-3 px-6 py-14 text-center">
+            <span
+              className="text-[9.5px] font-medium uppercase tracking-widest"
+              style={{ fontFamily: "'DM Mono', monospace", color: "#d0ccc8" }}
+            >
+              Coming soon
+            </span>
+            <p className="text-[12.5px] leading-relaxed" style={{ color: "#b0aca8" }}>
+              Content editing for{" "}
+              <strong style={{ color: "#888", fontWeight: 600 }}>
+                {section.name}
+              </strong>{" "}
+              will be available in a future version. Only the Hero section is editable in this prototype.
+            </p>
+          </div>
+        )}
+      </div>
+    </div>
+  );
+}
+
+function Step4({
+  pageType,
+  sections,
+  heroContent,
+  setHeroContent,
+}: {
+  pageType: PageType | null;
+  sections: PageSection[];
+  heroContent: HeroContent;
+  setHeroContent: (c: HeroContent) => void;
+}) {
+  const [selectedId, setSelectedId] = useState<string | null>(
+    sections.find((s) => s.pattern === "hero")?.id ?? null,
+  );
+
+  const selectedSection = sections.find((s) => s.id === selectedId) ?? null;
+  const typeName = PAGE_TYPES.find((p) => p.id === pageType)?.name ?? "your page";
+
+  return (
+    <div className="mx-auto max-w-[1100px] px-6 py-10">
+      <StepHeader
+        num="04"
+        title="Build the page architecture"
+        desc={`Recommended sections for a ${typeName}. Click any row to preview and edit its content.`}
+      />
+
+      <div
+        className="grid gap-6"
+        style={{ gridTemplateColumns: "1fr 360px", alignItems: "start" }}
+      >
+        {/* Left: section list */}
+        <div>
+          <div
+            className="mb-2 grid items-center px-3 text-[10px] font-medium uppercase tracking-widest"
+            style={{
+              gridTemplateColumns: "28px 1fr 160px 48px",
+              fontFamily: "'DM Mono', monospace",
+              color: "#c0bbb7",
+            }}
+          >
+            <span>#</span>
+            <span>Section</span>
+            <span>Pattern</span>
+            <span></span>
+          </div>
+
+          <div className="space-y-1.5">
+            {sections.map((s, i) => {
+              const pm = PATTERN_META[s.pattern];
+              const isSelected = selectedId === s.id;
+              return (
+                <button
+                  key={s.id}
+                  onClick={() => setSelectedId(s.id)}
+                  className="grid w-full items-center gap-x-3 rounded-xl px-3 py-3 text-left transition-all"
+                  style={{
+                    gridTemplateColumns: "28px 1fr 160px 48px",
+                    background: "#fff",
+                    border: isSelected
+                      ? "1px solid rgba(0,51,255,0.2)"
+                      : "1px solid rgba(0,0,0,0.07)",
+                    borderLeft: isSelected
+                      ? "3px solid #0033ff"
+                      : "1px solid rgba(0,0,0,0.07)",
+                    cursor: "pointer",
+                    outline: "none",
+                  }}
+                >
+                  <span
+                    className="text-[10px]"
+                    style={{
+                      fontFamily: "'DM Mono', monospace",
+                      color: isSelected ? "#0033ff" : "#c8c4c0",
+                    }}
+                  >
+                    {String(i + 1).padStart(2, "0")}
+                  </span>
+                  <div>
+                    <div
+                      className="text-[13.5px] font-semibold"
+                      style={{ color: "#1a1a1a" }}
+                    >
+                      {s.name}
+                    </div>
+                    <div className="text-[11.5px]" style={{ color: "#aaa" }}>
+                      {s.description}
+                    </div>
+                  </div>
+                  <span>
+                    <span
+                      className="inline-block rounded-md px-2 py-0.5 text-[10px] font-medium"
+                      style={{
+                        fontFamily: "'DM Mono', monospace",
+                        background: pm.bg,
+                        color: pm.color,
+                      }}
+                    >
+                      {pm.label}
+                    </span>
+                  </span>
+                  <span className="flex items-center justify-end gap-1.5">
+                    {s.required && (
+                      <span
+                        className="rounded-full px-1.5 py-0.5 text-[9px]"
+                        style={{
+                          fontFamily: "'DM Mono', monospace",
+                          background: "#f0eeec",
+                          color: "#b0aca8",
+                        }}
+                      >
+                        req.
+                      </span>
+                    )}
+                    <span
+                      className="text-[11px]"
+                      style={{ color: isSelected ? "#0033ff" : "#ddd" }}
+                    >
+                      {s.pattern === "hero" ? "✎" : "›"}
+                    </span>
+                  </span>
+                </button>
+              );
+            })}
+          </div>
+
+          <div
+            className="mt-5 rounded-xl px-4 py-3.5"
+            style={{ background: "#f5f3f0" }}
+          >
+            <span
+              className="mb-1 block text-[9.5px] font-medium uppercase tracking-wide"
+              style={{ fontFamily: "'DM Mono', monospace", color: "#c0bbb7" }}
+            >
+              Shared page structure
+            </span>
+            <p className="text-[12.5px]" style={{ color: "#888" }}>
+              hero → entry points → supporting content → trust → promotion →
+              final action
+            </p>
+          </div>
+        </div>
+
+        {/* Right: content panel */}
+        <div className="sticky top-6">
+          <ContentPanel
+            section={selectedSection}
+            heroContent={heroContent}
+            setHeroContent={setHeroContent}
+          />
+        </div>
+      </div>
+    </div>
+  );
+}
+
+// ── Step 5: Review ────────────────────────────────────────────────────────
+function Step5({
+  sections,
+  setSections,
+}: {
+  sections: PageSection[];
+  setSections: (s: PageSection[]) => void;
+}) {
+  const move = (idx: number, dir: -1 | 1) => {
+    const next = [...sections];
+    const target = idx + dir;
+    if (target < 0 || target >= next.length) return;
+    [next[idx], next[target]] = [next[target], next[idx]];
+    setSections(next);
+  };
+
+  const remove = (id: string) =>
+    setSections(sections.filter((s) => s.id !== id));
+
+  const setVariant = (id: string, v: string) =>
+    setSections(sections.map((s) => (s.id === id ? { ...s, variant: v } : s)));
+
+  return (
+    <div className="mx-auto max-w-[1100px] px-6 py-10">
+      <StepHeader
+        num="05"
+        title="Review and customize"
+        desc="Add, remove, and reorder sections. Choose a pattern variant for each section and adjust card counts, media, metrics, and actions."
+      />
+
+      <div
+        className="grid gap-6"
+        style={{ gridTemplateColumns: "1fr 264px", alignItems: "start" }}
+      >
+        {/* ── Left: section editor ── */}
+        <div>
+          <div className="space-y-2.5">
+            {sections.map((s, i) => {
+              const pm = PATTERN_META[s.pattern];
+              return (
+                <div
+                  key={s.id}
+                  className="flex items-center gap-3 rounded-xl px-4 py-3.5"
+                  style={{
+                    background: "#fff",
+                    border: "1px solid rgba(0,0,0,0.08)",
+                  }}
+                >
+                  <span
+                    className="shrink-0 select-none text-[15px]"
+                    style={{ color: "#ddd", cursor: "grab" }}
+                  >
+                    ⠿
+                  </span>
+
+                  <span
+                    className="shrink-0 text-[10px]"
+                    style={{
+                      fontFamily: "'DM Mono', monospace",
+                      color: "#c8c4c0",
+                      minWidth: "20px",
+                    }}
+                  >
+                    {String(i + 1).padStart(2, "0")}
+                  </span>
+
+                  <div className="min-w-0 flex-1">
+                    <div className="mb-0.5 flex items-center gap-2">
+                      <span className="text-[13.5px] font-semibold" style={{ color: "#1a1a1a" }}>
+                        {s.name}
+                      </span>
+                      <span
+                        className="inline-block rounded-md px-1.5 py-0.5 text-[9.5px] font-medium"
+                        style={{
+                          fontFamily: "'DM Mono', monospace",
+                          background: pm.bg,
+                          color: pm.color,
+                        }}
+                      >
+                        {pm.label}
+                      </span>
+                      {s.required && (
+                        <span
+                          className="text-[9.5px]"
+                          style={{ fontFamily: "'DM Mono', monospace", color: "#ccc" }}
+                        >
+                          req.
+                        </span>
+                      )}
+                    </div>
+                    <div className="text-[12px]" style={{ color: "#b0aca8" }}>
+                      {s.description}
+                    </div>
+                  </div>
+
+                  <select
+                    value={s.variant}
+                    onChange={(e) => setVariant(s.id, e.target.value)}
+                    className="rounded-lg px-2.5 py-1.5 text-[12px] font-medium"
+                    style={{
+                      border: "1px solid rgba(0,0,0,0.09)",
+                      background: "#faf9f7",
+                      color: "#555",
+                      fontFamily: "'Figtree', system-ui, sans-serif",
+                      cursor: "pointer",
+                      minWidth: "148px",
+                      outline: "none",
+                    }}
+                  >
+                    {s.variants.map((v) => (
+                      <option key={v} value={v}>{v}</option>
+                    ))}
+                  </select>
+
+                  <div className="flex flex-col gap-0.5">
+                    <button
+                      onClick={() => move(i, -1)}
+                      disabled={i === 0}
+                      className="flex items-center justify-center rounded p-0.5"
+                      style={{ color: i === 0 ? "#e8e5e2" : "#999", cursor: i === 0 ? "default" : "pointer" }}
+                    >
+                      <ChevronUp size={14} />
+                    </button>
+                    <button
+                      onClick={() => move(i, 1)}
+                      disabled={i === sections.length - 1}
+                      className="flex items-center justify-center rounded p-0.5"
+                      style={{ color: i === sections.length - 1 ? "#e8e5e2" : "#999", cursor: i === sections.length - 1 ? "default" : "pointer" }}
+                    >
+                      <ChevronDown size={14} />
+                    </button>
+                  </div>
+
+                  <button
+                    onClick={() => !s.required && remove(s.id)}
+                    className="flex items-center justify-center rounded-lg p-1.5"
+                    style={{ color: s.required ? "#e8e5e2" : "#cc4400", cursor: s.required ? "not-allowed" : "pointer" }}
+                    title={s.required ? "Required section — cannot remove" : "Remove section"}
+                  >
+                    <Trash2 size={13} />
+                  </button>
+                </div>
+              );
+            })}
+          </div>
+
+          <button
+            className="mt-3.5 flex w-full cursor-pointer items-center justify-center gap-2 rounded-xl py-3 transition-colors hover:bg-white"
+            style={{ border: "1.5px dashed rgba(0,0,0,0.1)", background: "transparent", color: "#b0aca8" }}
+          >
+            <Plus size={13} />
+            <span className="text-[13px] font-medium">Add section</span>
+          </button>
+        </div>
+
+        {/* ── Right: live preview ── */}
+        <div
+          className="sticky top-6 overflow-hidden rounded-2xl"
+          style={{ border: "1px solid rgba(0,0,0,0.09)", background: "#f5f3f0" }}
+        >
+          <div
+            className="flex items-center justify-between px-4 py-3"
+            style={{ borderBottom: "1px solid rgba(0,0,0,0.08)" }}
+          >
+            <span className="text-[12px] font-semibold" style={{ color: "#1a1a1a" }}>
+              Page preview
+            </span>
+            <span
+              className="text-[10px]"
+              style={{ fontFamily: "'DM Mono', monospace", color: "#b0aca8" }}
+            >
+              {sections.length} sections
+            </span>
+          </div>
+
+          <div
+            className="overflow-y-auto"
+            style={{ maxHeight: "calc(100vh - 260px)", scrollbarWidth: "none" }}
+          >
+            {sections.map((s, i) => (
+              <SectionWire key={s.id} section={s} index={i} />
+            ))}
+            <div
+              className="flex items-center justify-center py-4"
+              style={{ borderTop: "1px solid rgba(0,0,0,0.06)" }}
+            >
+              <span
+                className="text-[9.5px] uppercase tracking-widest"
+                style={{ fontFamily: "'DM Mono', monospace", color: "#c0bbb7" }}
+              >
+                · end of page ·
+              </span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+// ── Step 6: Generate ──────────────────────────────────────────────────────
+function SummaryRow({
+  label,
+  value,
+  wide = false,
+}: {
+  label: string;
+  value: string;
+  wide?: boolean;
+}) {
+  return (
+    <div className={wide ? "col-span-2" : ""}>
+      <div
+        className="mb-0.5 text-[11px] font-medium"
+        style={{ color: "#c0bbb7" }}
+      >
+        {label}
+      </div>
+      <div
+        className="text-[13px] font-medium"
+        style={{ color: value === "—" ? "#c0bbb7" : "#1a1a1a" }}
+      >
+        {value}
+      </div>
+    </div>
+  );
+}
+
+function Step6({
+  pageType,
+  brief,
+  sections,
+}: {
+  pageType: PageType | null;
+  brief: ContentBrief;
+  sections: PageSection[];
+}) {
+  const [generated, setGenerated] = useState(false);
+  const typeName =
+    PAGE_TYPES.find((p) => p.id === pageType)?.name ?? "Page";
+
+  if (generated) {
+    return (
+      <div className="mx-auto flex max-w-[520px] flex-col items-center px-6 py-24 text-center">
+        <div
+          className="mb-5 flex h-16 w-16 items-center justify-center rounded-2xl text-2xl"
+          style={{ background: "#e0fff5", color: "#007755" }}
+        >
+          ✓
+        </div>
+        <div
+          className="mb-2 text-[20px] font-semibold"
+          style={{ color: "#1a1a1a" }}
+        >
+          Page spec ready
+        </div>
+        <p
+          className="text-[13.5px] leading-relaxed"
+          style={{ color: "#888" }}
+        >
+          Your {typeName} has been specced with {sections.length} sections
+          following the shared structure. The architecture is ready for build.
+        </p>
+        <button
+          onClick={() => setGenerated(false)}
+          className="mt-6 cursor-pointer text-[12.5px] font-medium"
+          style={{ color: "#b0aca8" }}
+        >
+          ← Back to spec
+        </button>
+      </div>
+    );
+  }
+
+  return (
+    <div className="mx-auto max-w-[640px] px-6 py-10">
+      <StepHeader
+        num="06"
+        title="Generate"
+        desc="Review your complete spec and produce one page or a coordinated page set."
+      />
+
+      {/* Brief summary */}
+      <div
+        className="mb-4 rounded-2xl p-5"
+        style={{ background: "#fff", border: "1px solid rgba(0,0,0,0.08)" }}
+      >
+        <div
+          className="mb-4 text-[10px] font-medium uppercase tracking-widest"
+          style={{ fontFamily: "'DM Mono', monospace", color: "#c0bbb7" }}
+        >
+          Brief summary
+        </div>
+        <div className="grid grid-cols-2 gap-x-6 gap-y-3.5">
+          <SummaryRow label="Page type" value={typeName} />
+          <SummaryRow
+            label="Audience"
+            value={brief.audience.trim() || "—"}
+          />
+          <SummaryRow
+            label="Service line"
+            value={brief.serviceLine.trim() || "—"}
+          />
+          <SummaryRow
+            label="Primary action"
+            value={brief.primaryAction.trim() || "—"}
+          />
+          {brief.pageGoal.trim() && (
+            <SummaryRow
+              label="Page goal"
+              value={brief.pageGoal.trim()}
+              wide
+            />
+          )}
+        </div>
+      </div>
+
+      {/* Sections */}
+      <div
+        className="mb-5 rounded-2xl p-5"
+        style={{ background: "#fff", border: "1px solid rgba(0,0,0,0.08)" }}
+      >
+        <div
+          className="mb-4 text-[10px] font-medium uppercase tracking-widest"
+          style={{ fontFamily: "'DM Mono', monospace", color: "#c0bbb7" }}
+        >
+          Page structure · {sections.length} sections
+        </div>
+        <div className="flex flex-wrap gap-2">
+          {sections.map((s, i) => {
+            const pm = PATTERN_META[s.pattern];
+            return (
+              <span
+                key={s.id}
+                className="inline-flex items-center gap-1.5 rounded-full px-2.5 py-1 text-[12px] font-medium"
+                style={{ background: pm.bg, color: pm.color }}
+              >
+                <span
+                  className="text-[9px] opacity-60"
+                  style={{ fontFamily: "'DM Mono', monospace" }}
+                >
+                  {String(i + 1).padStart(2, "0")}
+                </span>
+                {s.name}
+              </span>
+            );
+          })}
+        </div>
+        <div
+          className="mt-4 rounded-lg px-3.5 py-2.5 text-[12px]"
+          style={{ background: "#f5f3f0", color: "#999" }}
+        >
+          <span
+            className="mr-2 text-[9.5px] uppercase tracking-wide"
+            style={{ fontFamily: "'DM Mono', monospace", color: "#c0bbb7" }}
+          >
+            Structure
+          </span>
+          hero → entry points → supporting content → trust → promotion →
+          final action
+        </div>
+      </div>
+
+      {/* Generate CTA */}
+      <button
+        onClick={() => setGenerated(true)}
+        className="flex w-full cursor-pointer items-center justify-center gap-2.5 rounded-full py-3.5 text-[14px] font-semibold text-white transition-opacity hover:opacity-90"
+        style={{ background: "#0033ff" }}
+      >
+        <Zap size={15} />
+        Generate page
+      </button>
+      <p
+        className="mt-3 text-center text-[12px]"
+        style={{ color: "#c0bbb7" }}
+      >
+        Produces one {typeName.toLowerCase()} following the approved shared
+        structure
+      </p>
+    </div>
+  );
+}
+
+// ── Preview panel ────────────────────────────────────────────────────────
+function SectionWire({ section, index }: { section: PageSection; index: number }) {
+  const pm = PATTERN_META[section.pattern];
+
+  const wireframe = () => {
+    switch (section.pattern) {
+      case "hero":
+        return (
+          <div
+            className="flex flex-col items-center justify-center gap-2 px-4 py-7"
+            style={{ background: "#1a1a1a" }}
+          >
+            <div className="h-2.5 w-28 rounded" style={{ background: "rgba(255,255,255,0.22)" }} />
+            <div className="h-1.5 w-40 rounded" style={{ background: "rgba(255,255,255,0.12)" }} />
+            <div className="h-1.5 w-36 rounded" style={{ background: "rgba(255,255,255,0.10)" }} />
+            <div className="mt-2 h-6 w-20 rounded-full" style={{ background: "#0033ff", opacity: 0.7 }} />
+          </div>
+        );
+
+      case "overview-cards":
+      case "graphic-cards":
+        return (
+          <div className="grid grid-cols-3 gap-1.5 px-3 py-3">
+            {[0, 1, 2].map((i) => (
+              <div
+                key={i}
+                className="rounded-lg p-2"
+                style={{ border: "1px solid rgba(0,0,0,0.07)", background: "#fff" }}
+              >
+                {section.pattern === "graphic-cards" && (
+                  <div className="mb-1.5 h-8 rounded" style={{ background: "#f0eeec" }} />
+                )}
+                <div className="mb-1 h-1.5 w-full rounded" style={{ background: "#e0ddd9" }} />
+                <div className="h-1.5 w-4/5 rounded" style={{ background: "#eceae7" }} />
+              </div>
+            ))}
+          </div>
+        );
+
+      case "accent-cards":
+        return (
+          <div className="grid grid-cols-3 gap-1.5 px-3 py-3">
+            {[0, 1, 2].map((i) => (
+              <div
+                key={i}
+                className="flex flex-col items-center gap-1 rounded-lg p-2.5"
+                style={{ background: pm.bg }}
+              >
+                <div className="h-3.5 w-10 rounded" style={{ background: pm.color, opacity: 0.28 }} />
+                <div className="h-1.5 w-full rounded" style={{ background: pm.color, opacity: 0.14 }} />
+              </div>
+            ))}
+          </div>
+        );
+
+      case "text-media":
+        return (
+          <div className="grid grid-cols-2 gap-2.5 px-3 py-3">
+            <div className="flex flex-col gap-1.5">
+              <div className="h-2 w-3/4 rounded" style={{ background: "#ddd" }} />
+              {[0, 1, 2].map((i) => (
+                <div key={i} className="h-1.5 rounded" style={{ background: "#eceae7", width: i === 2 ? "70%" : "100%" }} />
+              ))}
+              <div className="mt-1 h-5 w-14 rounded-full" style={{ background: "#1a1a1a", opacity: 0.15 }} />
+            </div>
+            <div className="rounded-lg" style={{ background: "#f0eeec", minHeight: 68 }} />
+          </div>
+        );
+
+      case "expanded-text":
+        return (
+          <div className="flex flex-col gap-1.5 px-3 py-3">
+            <div className="mb-0.5 h-2 w-1/2 rounded" style={{ background: "#ddd" }} />
+            {[0, 1, 2, 3, 4].map((i) => (
+              <div
+                key={i}
+                className="h-1.5 rounded"
+                style={{ background: "#eceae7", width: i === 4 ? "55%" : i === 2 ? "88%" : "100%" }}
+              />
+            ))}
+          </div>
+        );
+
+      case "external-link-cards":
+        return (
+          <div className="flex flex-col gap-1.5 px-3 py-3">
+            {[0, 1, 2].map((i) => (
+              <div
+                key={i}
+                className="flex items-center gap-2 rounded-lg px-3 py-2"
+                style={{ border: "1px solid rgba(0,0,0,0.07)", background: "#fff" }}
+              >
+                <div className="h-1.5 flex-1 rounded" style={{ background: "#eceae7" }} />
+                <div className="h-2 w-2 rounded-full" style={{ background: "#ddd" }} />
+              </div>
+            ))}
+          </div>
+        );
+
+      case "form":
+        return (
+          <div className="flex flex-col gap-2 px-3 py-3">
+            {[0, 1].map((i) => (
+              <div
+                key={i}
+                className="h-7 rounded-lg"
+                style={{ border: "1px solid rgba(0,0,0,0.1)", background: "#fff" }}
+              />
+            ))}
+            <div className="h-7 rounded-full" style={{ background: "#1a1a1a", opacity: 0.14 }} />
+          </div>
+        );
+
+      case "promo-banner":
+        return (
+          <div
+            className="flex flex-col items-center justify-center gap-2 px-3 py-5"
+            style={{ background: pm.bg }}
+          >
+            <div className="h-2 w-28 rounded" style={{ background: pm.color, opacity: 0.28 }} />
+            <div className="h-1.5 w-20 rounded" style={{ background: pm.color, opacity: 0.18 }} />
+            <div className="mt-1 h-5 w-16 rounded-full" style={{ background: pm.color, opacity: 0.22 }} />
+          </div>
+        );
+
+      default:
+        return (
+          <div className="px-3 py-5">
+            <div className="h-1.5 w-full rounded" style={{ background: "#eceae7" }} />
+          </div>
+        );
+    }
+  };
+
+  return (
+    <div style={{ borderBottom: "1px solid rgba(0,0,0,0.06)" }}>
+      {/* Section label row */}
+      <div
+        className="flex items-center gap-1.5 px-3 py-1.5"
+        style={{ background: "#f5f3f0" }}
+      >
+        <span
+          className="text-[9.5px]"
+          style={{ fontFamily: "'DM Mono', monospace", color: "#c0bbb7" }}
+        >
+          {String(index + 1).padStart(2, "0")}
+        </span>
+        <span className="flex-1 truncate text-[11px] font-medium" style={{ color: "#555" }}>
+          {section.name}
+        </span>
+        <span
+          className="rounded px-1.5 py-0.5 text-[9px] font-medium"
+          style={{
+            fontFamily: "'DM Mono', monospace",
+            background: pm.bg,
+            color: pm.color,
+          }}
+        >
+          {pm.label}
+        </span>
+      </div>
+      {/* Wireframe */}
+      {wireframe()}
+    </div>
+  );
+}
+
+function PreviewPanel({ sections }: { sections: PageSection[] }) {
+  const typeName = sections.length > 0
+    ? "Page preview"
+    : "No sections yet";
+
+  return (
+    <aside
+      className="flex w-[272px] shrink-0 flex-col overflow-hidden"
+      style={{
+        borderLeft: "1px solid rgba(0,0,0,0.09)",
+        background: "#f5f3f0",
+      }}
+    >
+      {/* Header */}
+      <div
+        className="flex shrink-0 items-center justify-between px-4 py-3"
+        style={{ borderBottom: "1px solid rgba(0,0,0,0.08)", background: "#f5f3f0" }}
+      >
+        <span className="text-[12px] font-semibold" style={{ color: "#1a1a1a" }}>
+          {typeName}
+        </span>
+        {sections.length > 0 && (
+          <span
+            className="text-[10px]"
+            style={{ fontFamily: "'DM Mono', monospace", color: "#b0aca8" }}
+          >
+            {sections.length} sections
+          </span>
+        )}
+      </div>
+
+      {/* Wireframe scroll */}
+      <div className="flex-1 overflow-y-auto" style={{ scrollbarWidth: "none" }}>
+        {sections.length === 0 ? (
+          <div
+            className="flex h-full flex-col items-center justify-center gap-2 px-6 text-center"
+          >
+            <span className="text-[22px] opacity-20">⬜</span>
+            <p className="text-[12px]" style={{ color: "#b0aca8" }}>
+              Complete steps 2–3 to see a page preview here.
+            </p>
+          </div>
+        ) : (
+          <>
+            {sections.map((s, i) => (
+              <SectionWire key={s.id} section={s} index={i} />
+            ))}
+            {/* Page end indicator */}
+            <div
+              className="flex items-center justify-center py-4"
+              style={{ borderTop: "1px solid rgba(0,0,0,0.06)" }}
+            >
+              <span
+                className="text-[9.5px] uppercase tracking-widest"
+                style={{ fontFamily: "'DM Mono', monospace", color: "#c0bbb7" }}
+              >
+                · end of page ·
+              </span>
+            </div>
+          </>
+        )}
+      </div>
+    </aside>
+  );
+}
+
+// ── Step footer nav ───────────────────────────────────────────────────────
+function StepFooter({
+  step,
+  canAdvance,
+  onNext,
+  onBack,
+}: {
+  step: number;
+  canAdvance: boolean;
+  onNext: () => void;
+  onBack: () => void;
+}) {
+  const isLast = step === 6;
+  return (
+    <div
+      className="flex shrink-0 items-center justify-between px-8 py-3.5"
+      style={{
+        borderTop: "1px solid rgba(0,0,0,0.07)",
+        background: "#fff",
+      }}
+    >
+      <button
+        onClick={onBack}
+        disabled={step === 1}
+        className="flex items-center gap-1.5 rounded-full px-4 py-2 text-[13px] font-medium transition-all"
+        style={{
+          border: "1px solid rgba(0,0,0,0.09)",
+          color: step === 1 ? "#d8d4d0" : "#666",
+          cursor: step === 1 ? "default" : "pointer",
+          background: "#fff",
+        }}
+      >
+        ← Back
+      </button>
+
+      <span
+        className="text-[10.5px]"
+        style={{ fontFamily: "'DM Mono', monospace", color: "#c8c4c0" }}
+      >
+        {step} / 6
+      </span>
+
+      {isLast ? (
+        <div style={{ width: "88px" }} />
+      ) : (
+        <button
+          onClick={onNext}
+          disabled={!canAdvance}
+          className="flex items-center gap-1.5 rounded-full px-5 py-2 text-[13px] font-semibold text-white transition-all"
+          style={{
+            background: canAdvance ? "#1a1a1a" : "#e0ddd9",
+            cursor: canAdvance ? "pointer" : "not-allowed",
+          }}
+        >
+          Continue →
+        </button>
+      )}
+    </div>
+  );
+}
+
+// ── Main App ──────────────────────────────────────────────────────────────
+export default function App() {
+  const [step, setStep] = useState(3);
+  const [pageType, setPageType] = useState<PageType | null>("business");
+  const [brief, setBrief] = useState<ContentBrief>({
+    audience:
+      "Current Cigna/Evernorth members who have been prescribed a GLP-1 medication and are seeking pharmacy fulfillment, dosing support, and cost management.",
+    serviceLine:
+      "Evernorth EnGuide℠ Pharmacy — specialty home delivery pharmacy for GLP-1 medications, operating under the Evernorth® brand.",
+    pageGoal:
+      "Drive enrolled members to use EnGuide Pharmacy for their GLP-1 prescriptions. Communicate the distinct benefits (dosing guidance, 90-day supply, EPP, auto-reminders, savings cards) and provide clear entry points for new members, current members, and providers.",
+    primaryAction: "Log in to account",
+    secondaryAction: "Explore FAQs",
+    requiredContent:
+      "• Evernorth® / EnGuide℠ brand attribution\n• Pharmacist availability and direct-to-doctor coordination\n• 90-day supply benefit and cost/continuity rationale\n• Extended Payment Plan (EPP) — 3 equal payments\n• Automatic refill reminders at 7-day and 2-day windows\n• Manufacturer savings card acceptance disclaimer\n• Free standard shipping disclosure\n• Express Scripts® Pharmacy callout for non-GLP-1 prescriptions",
+    existingCopy:
+      "Support on your GLP-1 journey\n\nHeld to the highest standards under the Evernorth® brand, Evernorth EnGuide℠ Pharmacy is committed to offering guidance and support on your GLP-1 journey. Our team of specially trained pharmacists are readily available to address your needs and work directly with your doctor to help you save money, discuss treatment options, and more.\n\nNeed a prescription that isn't a GLP-1? Express Scripts® Pharmacy, an Evernorth home delivery pharmacy, is ready to assist you.\n\nMember benefits\nAs an Evernorth EnGuide Pharmacy patient, you'll have access to:\n— Assistance with getting you safely to your optimal dose for best results\n— 90-day supplies: Switching to a longer supply could save you time and money while ensuring your therapy remains uninterrupted.\n— Extended Payment Plan (EPP): Spread out your costs with the option to pay in three equal payments instead of all at once.\n— Automatic reminders: We'll send you notifications reminding you to place an order when you're seven days and two days away from needing a refill.\n— Manufacturer's savings card programs (also known as coupons): We are currently accepting select manufacturer savings cards.\n\nHow to get started\nNew and current members: We'll send your GLP-1 prescription right to your door, with free standard shipping.\nProviders: When your patients request GLP-1s, we're here to work with you.",
+  });
+  const [sections, setSections] = useState<PageSection[]>([]);
+  const [completed, setCompleted] = useState<Set<number>>(new Set([1, 2]));
+  const [heroContent, setHeroContent] = useState<HeroContent>(DEFAULT_HERO);
+
+  const canAdvance =
+    step === 1
+      ? true
+      : step === 2
+        ? pageType !== null
+        : step === 3
+          ? brief.audience.trim().length > 0
+          : step === 4
+            ? true
+            : step === 5
+              ? sections.length > 0
+              : false;
+
+  const goNext = useCallback(() => {
+    // Initialize sections when leaving step 3
+    if (step === 3 && pageType) {
+      if (sections.length === 0) {
+        setSections(initSections(pageType));
+      }
+    }
+    setCompleted((prev) => new Set([...prev, step]));
+    setStep((s) => Math.min(s + 1, 6));
+  }, [step, pageType, sections.length]);
+
+  const goBack = useCallback(() => {
+    setStep((s) => Math.max(s - 1, 1));
+  }, []);
+
+  // Derive sections for step 4 if not yet initialized
+  const step4Sections =
+    sections.length > 0
+      ? sections
+      : pageType
+        ? initSections(pageType)
+        : [];
+
+  return (
+    <div
+      className="flex h-screen flex-col overflow-hidden"
+      style={{ fontFamily: "'Figtree', system-ui, sans-serif" }}
+    >
+      {/* Toolbar */}
+      <header
+        className="flex shrink-0 items-center gap-2.5 px-5 py-2.5"
+        style={{
+          background: "#0c0c0c",
+          borderBottom: "1px solid rgba(255,255,255,0.07)",
+        }}
+      >
+        <span
+          className="flex h-5 w-5 items-center justify-center rounded-md text-[11px]"
+          style={{ background: "#222", color: "#666" }}
+        >
+          ◈
+        </span>
+        <span
+          className="text-[13px] font-semibold"
+          style={{ color: "#d0cdc9" }}
+        >
+          Page Builder
+        </span>
+        <span
+          className="rounded-full px-2 py-0.5 text-[10.5px] font-medium"
+          style={{
+            fontFamily: "'DM Mono', monospace",
+            background: "#1c1c1c",
+            color: "#484848",
+          }}
+        >
+          spec plan mode
+        </span>
+        <div className="flex-1" />
+        <span
+          className="text-[10.5px]"
+          style={{ fontFamily: "'DM Mono', monospace", color: "#383838" }}
+        >
+          v0.1 · prototype
+        </span>
+      </header>
+
+      {/* Body */}
+      <div className="flex min-h-0 flex-1">
+        <Sidebar
+          step={step}
+          completed={completed}
+          onNavigate={(s) => {
+            if (completed.has(s) || s <= step) setStep(s);
+          }}
+        />
+
+        <main
+          className="flex flex-1 flex-col overflow-hidden"
+          style={{ background: "#faf9f7" }}
+        >
+          <div
+            className="flex-1 overflow-y-auto"
+            style={{ scrollbarWidth: "none" }}
+          >
+            {step === 1 && <Step1 />}
+            {step === 2 && (
+              <Step2
+                pageType={pageType}
+                setPageType={(t) => {
+                  setPageType(t);
+                  setSections([]);
+                }}
+              />
+            )}
+            {step === 3 && (
+              <Step3 brief={brief} setBrief={setBrief} />
+            )}
+            {step === 4 && (
+              <Step4
+                pageType={pageType}
+                sections={step4Sections}
+                heroContent={heroContent}
+                setHeroContent={setHeroContent}
+              />
+            )}
+            {step === 5 && (
+              <Step5 sections={sections} setSections={setSections} />
+            )}
+            {step === 6 && (
+              <Step6
+                pageType={pageType}
+                brief={brief}
+                sections={sections}
+              />
+            )}
+          </div>
+
+          <StepFooter
+            step={step}
+            canAdvance={canAdvance}
+            onNext={goNext}
+            onBack={goBack}
+          />
+        </main>
+
+      </div>
+    </div>
+  );
+}
