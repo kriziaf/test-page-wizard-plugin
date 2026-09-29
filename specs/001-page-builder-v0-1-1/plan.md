@@ -52,7 +52,7 @@ Source of truth for pattern names, variants, and guidance: `src/app/patterns/REA
 | Pattern | SVG files (`{pattern}--{variant}.svg`) |
 |---------|----------------------------------------|
 | overview-cards | `stacked-right`, `grid-3-up`, `grid-2-up` |
-| accent-cards | `tinted`, `neutral` |
+| accent-cards | `brand`, `subtle` |
 | graphic-cards | `illustration`, `icon` |
 | horizontal-cards | `1-col-large`, `2-col-compact`, `2-col` |
 | external-link-cards | `compact`, `icon-heading-body`, `text-only` |
@@ -62,10 +62,12 @@ Source of truth for pattern names, variants, and guidance: `src/app/patterns/REA
 | longform-text | `paragraph`, `bullet-list`, `resource-list` |
 | hero-primary | `image-overlay`, `form-image`, `split-media` |
 | hero-secondary | `brand-teal`, `bright-green`, `light-neutral` |
-| two-col-form | `default`, `tinted-form` |
-| promo-banner-card | `image-led`, `branded-cta`, `simple-cta` |
+| two-col-form | `subtle`, `brand` |
+| promo-banner-card | `image-led-brand`, `image-led-subtle`, `branded-cta`, `simple-cta` |
 
-That is 38 SVGs. Card pattern variants (overview, accent, graphic, horizontal, external link) are not in the pattern documentation, so their names describe the drawings the owner made. Longform Text and the four Functional patterns are not yet drawn or renamed.
+That is 39 SVGs. Card pattern variants (overview, accent, graphic, horizontal, external link) are not in the pattern documentation, so their names describe the drawings the owner made. Longform Text, Hero Primary and Hero Secondary are not yet drawn.
+
+Variant naming rule: where a pattern has a gray treatment and a tinted-green treatment, they are called `subtle` (gray) and `brand` (tinted green).
 
 How it works:
 
@@ -126,15 +128,14 @@ src/app/
 | overview-cards, accent-cards, graphic-cards, horizontal-cards, external-link-cards | Drawn and renamed. All five are in `card-patterns/` |
 | bullet-image, text-media, expanded-text | Drawn and renamed, in `text-and-list/` |
 | longform-text | Parked. No drawings yet. Renders as a labeled placeholder until drawn |
+| promo-banner-card (4), two-col-form (2) | Drawn and renamed, in `functional-patterns/`. Promo banner sits with the functional set for now |
 | hero-primary, hero-secondary | Not drawn yet |
-| promo-banner-card | 4 drawings in `functional-patterns/`, not yet renamed. The documentation lists 3 variants and there are two image-led drawings [NEEDS CLARIFICATION: names for the two image-led drawings] |
-| two-col-form | 2 drawings, not yet renamed. Proposed: `default` (neutral panel) and `tinted-form` (tinted panel) |
 
 Mock images: the image areas in Text Media (4), Bullet Image (3) and Overview Cards `stacked-right` contain a neutral mock image drawn into the SVG, tagged `data-mock="image"` so it can be found and swapped later.
 
 ## SVG Weight
 
-Drawings are 80 KB to 2 MB each because text is converted to outlines and two promo banners embed photos. Measured on a copy: running SVGO over the 30 pattern SVGs cut the folder from 12.4 MB to 6.8 MB (about 45%). Plan, pending your decision:
+Drawings are 80 KB to 2 MB each because text is converted to outlines and two promo banners embed photos. Measured on a copy: running SVGO over the 30 pattern SVGs cut the folder from 12.4 MB to 6.8 MB (about 45%). Decision (approved):
 
 - Keep the source SVGs in the repo exactly as drawn.
 - Optimize only when building the export, not the source files.
