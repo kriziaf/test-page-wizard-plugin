@@ -160,6 +160,28 @@ Graphic Cards is parked; it is available through Add section on Services.
 
 Services defaults differ from "first documented variant" so the default page matches the reference templates: Hero Primary `split-media`, Expanded Text `split-1-col`, Text Media `image-left-video`, Promo Banner Card `branded-cta`.
 
+## Services Validation (T012)
+
+Generated Services mock (default list) compared to the four reference templates. Each template section maps to a registered pattern and variant, so all four pages can be rebuilt from the drawings:
+
+| Template | Sections in order, mapped to the registry |
+|----------|--------------------------------------------|
+| 01 Virtual Care Overview | `hero-primary--form-image`, `external-link-cards--compact`, `expanded-text--split-1-col`, `accent-cards--brand`, `text-media--image-left-video`, `accent-cards--brand`, `promo-banner-card--branded-cta` |
+| 02 Urgent Care & Walk-ins | `hero-primary--split-media`, `external-link-cards--compact`, `bullet-image--icon-bullets`, `overview-cards--grid-2-up`, `promo-banner-card--image-led-subtle`, `text-media--image-left-video`, `promo-banner-card--branded-cta` |
+| 03 Find a Provider | `hero-primary--image-overlay`, `external-link-cards--compact`, `overview-cards--stacked-right`, `highlight-band--brand`, `text-media--image-left-video`, `accent-cards--subtle`, `promo-banner-card--branded-cta` |
+| 04 Primary Care at Home | `hero-primary--split-media`, `expanded-text--split-2-col`, `highlight-band--complex-brand`, `bullet-image--icon-bullets`, (outlined 3x2 icon and bullet cards: no pattern), `text-media--image-left-video`, `promo-banner-card--branded-cta` |
+
+Default generated page (checked in the mock and the export): Hero Primary `split-media`, External Link Cards `compact`, Expanded Text `split-1-col`, Text Media `image-left-video`, Accent Cards `brand`, Promo Banner Card `branded-cta`, Two-Col Form `subtle`. Those seven sections render with no placeholders and match the corresponding template sections visually.
+
+Gaps found:
+
+- Template 04's 3x2 outlined cards (icon, title, bullets) have no pattern. Graphic Cards is parked, so nothing covers them yet.
+- Highlight Band appears in two of four templates (03, 04) but is not in the recommended list. It is available through Add section. Move it into the list if you want it by default.
+- Bullet Image, Overview Cards and a second Promo Banner Card each appear in one template and are available only through Add section.
+- Template 01's hero has a select field and one button, which matches Hero Primary `form-image`, not the `split-media` default.
+- Template 03's Overview Cards `stacked-right` has no image on the left; that is a drawing gap in the template.
+- Placeholder copy differs by drawing (prescription links, crisis support, mental health), so a stacked mock reads as mixed topics until text swapping (v0.2).
+
 ## Versioning
 
 Option A: one spec folder per release (`001-page-builder-v0-1-1`, later `002-page-builder-v0-2-0`). v0.1.1 is one cohesive release. Switch to one folder per feature, with git tags marking releases, when a release starts bundling several independent features. Add a `v0.1.1` git tag when it ships.

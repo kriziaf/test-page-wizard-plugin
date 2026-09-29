@@ -26,9 +26,9 @@ Format: `[ID] [P?] [Story] Description`. **[P]** = can run in parallel. Status: 
 ## Phase 4: Validate and follow up
 
 - [x] T011 Walkthrough of the Services path in a headless browser: 8 sections render, no placeholders, export has no external requests
-- [ ] T012 Compare the generated Services mock to `templates/services-page/01` to `04` section by section; record gaps in `plan.md`
+- [x] T012 Compare the generated Services mock to `templates/services-page/01` to `04` section by section; gaps recorded in `plan.md` (Services Validation)
 - [ ] T013 Business Page pass: check the section list against a real Business page (ON HOLD)
-- [ ] T014 Article and Blog pass (Longform Text still mock drawings)
+- [ ] T014 Article and Blog pass (Longform Text still mock drawings) (PARKED)
 - [ ] T015 [P] Confirm Leaf token match for `#EAF4F6` and `#0F7885` in the drawings
 - [ ] T016 Decide whether the ~35 MB `templates/` folder stays in the repo
 - [ ] T017 Decide on automated tests before v0.2
