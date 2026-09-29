@@ -94,8 +94,10 @@ src/app/
 ├── App.tsx                  # existing: steps, state; edits listed below
 ├── patterns/
 │   ├── README.md            # pattern documentation (provided)
-│   ├── *.svg                # one per pattern variant (drawn by owner)
-│   └── registry.ts          # reads the SVG folder, exposes patterns and variants
+│   ├── card-patterns/       # SVGs, one per pattern variant (drawn by owner)
+│   ├── text-and-list/       # SVGs
+│   ├── functional/          # SVGs (folder to be added; name to confirm)
+│   └── registry.ts          # reads all SVGs under patterns/, exposes patterns and variants
 ├── mock/
 │   └── MockPage.tsx         # stacks SVGs for the chosen sections
 └── export/
