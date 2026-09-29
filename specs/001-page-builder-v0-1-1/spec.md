@@ -174,6 +174,8 @@ Notes: Accent Cards stands in for the earlier "Author bio" section on Article an
 - Multi-page sets, Search Results, Primary Care at Home, and Figma export via Figma MCP are deferred to later versions.
 - Pattern SVGs are drawn by the project owner and bundled with the tool; users cannot upload their own SVGs in v0.1.1.
 - Pattern SVGs are static, with placeholder text baked in. The mock page does not show the brief or hero content in v0.1.1. Tagged text slots that swap in user content are a later version.
+- Longform Text has no drawings yet and is parked. Until it is drawn, sections using it render as labeled placeholder blocks.
+- Image areas in Text Media, Bullet Image, and Overview Cards (stacked-right) show a neutral mock image drawn into the SVG.
 - Pattern SVGs are approximations for demonstration; matching the production component library is out of scope.
 - The mock is a wireframe-level view of structure and variant choice, not a rendering of the user's content.
 - Blog uses the Article section list until real Blog sections are defined.

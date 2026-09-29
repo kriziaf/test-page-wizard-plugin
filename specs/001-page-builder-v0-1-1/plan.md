@@ -96,7 +96,8 @@ src/app/
 │   ├── README.md            # pattern documentation (provided)
 │   ├── card-patterns/       # SVGs, one per pattern variant (drawn by owner)
 │   ├── text-and-list/       # SVGs
-│   ├── functional/          # SVGs (folder to be added; name to confirm)
+│   ├── functional-patterns/ # SVGs
+│   ├── templates/           # full-page reference drawings (not patterns; not bundled in exports)
 │   └── registry.ts          # reads all SVGs under patterns/, exposes patterns and variants
 ├── mock/
 │   └── MockPage.tsx         # stacks SVGs for the chosen sections
@@ -117,6 +118,33 @@ src/app/
 | Step 5 | Wire Add section to the approved sections not currently on the page |
 | Step 6 | Replace "Page spec ready" confirmation with Generate, mock page view (stacked SVGs), Export HTML, and a disabled "Figma (v2)" option |
 | App state | Add pasted brief text; keep it across step navigation |
+
+## Pattern SVG Status
+
+| Pattern | Status |
+|---------|--------|
+| overview-cards, accent-cards, graphic-cards, horizontal-cards, external-link-cards | Drawn and renamed. All five are in `card-patterns/` |
+| bullet-image, text-media, expanded-text | Drawn and renamed, in `text-and-list/` |
+| longform-text | Parked. No drawings yet. Renders as a labeled placeholder until drawn |
+| hero-primary, hero-secondary | Not drawn yet |
+| promo-banner-card | 4 drawings in `functional-patterns/`, not yet renamed. The documentation lists 3 variants and there are two image-led drawings [NEEDS CLARIFICATION: names for the two image-led drawings] |
+| two-col-form | 2 drawings, not yet renamed. Proposed: `default` (neutral panel) and `tinted-form` (tinted panel) |
+
+Mock images: the image areas in Text Media (4), Bullet Image (3) and Overview Cards `stacked-right` contain a neutral mock image drawn into the SVG, tagged `data-mock="image"` so it can be found and swapped later.
+
+## SVG Weight
+
+Drawings are 80 KB to 2 MB each because text is converted to outlines and two promo banners embed photos. Measured on a copy: running SVGO over the 30 pattern SVGs cut the folder from 12.4 MB to 6.8 MB (about 45%). Plan, pending your decision:
+
+- Keep the source SVGs in the repo exactly as drawn.
+- Optimize only when building the export, not the source files.
+- Use SVGO with ID prefixing per file. Its default ID minifying would make IDs collide when several SVGs are inlined into one HTML file. (The current files have unique IDs, so nothing collides today.)
+- Check the optimized output looks identical before relying on it.
+- Text stays as outlines, so text swapping (option B) remains a later redraw or re-export job.
+
+## Reference Templates
+
+`templates/services-page/` holds four full-page drawings (01 Virtual Care Overview, 02 Urgent Care & Walk-ins, 03 Find a Provider, 05 Primary Care at Home; 04 is absent). They are 1.8 MB to 15 MB each, 33 MB in total. Plan: treat them as reference material for building the Services page, never load them in the app or the export, and decide whether they belong in the repo at this size.
 
 ## Build Order
 
