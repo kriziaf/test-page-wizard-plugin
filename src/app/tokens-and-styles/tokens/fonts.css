@@ -1,0 +1,6 @@
+/* Webfonts. Evernorth/White Label use Inter/Nunito; TCG uses Montserrat.
+   CHC's headline font (Value Serif Pro / Value Sans Pro) is a licensed
+   Colophon face not supplied to this system — falls back to
+   Georgia / Helvetica until the real files are provided. Flag this to
+   the brand team if pixel-exact CHC type is required. */
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700&family=Inter:wght@400;500;600&family=Nunito:wght@400;600;700&display=swap');

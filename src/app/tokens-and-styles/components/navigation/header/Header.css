@@ -1,0 +1,32 @@
+.header{font-family:var(--hd-font);color:var(--hd-ink);background:#fff;box-shadow:0 4px 6px var(--hd-shadow);position:relative}
+.header__bar{max-width:1440px;margin:0 auto;height:88px;padding:0 1rem;box-sizing:border-box;display:flex;align-items:center;gap:1.5rem}
+.header__logo{display:flex;align-items:center;text-decoration:none;color:var(--hd-accent);margin-right:.5rem}
+.header__logo-tcg,.header__logo-evernorth,.header__logo-chc,.header__logo-white-label{display:none}
+[data-theme="tcg"] .header__logo-tcg{display:block}
+[data-theme="evernorth"] .header__logo-evernorth{display:block}
+[data-theme="chc"] .header__logo-chc{display:block}
+[data-theme="white-label"] .header__logo-white-label{display:block}
+.header__logo-mark{display:block}
+.header__logo-text{font-weight:700;font-size:1.25rem;letter-spacing:.02em}
+.header__nav{display:none}
+.header__nav-list{display:flex;list-style:none;margin:0;padding:0}
+.header__nav-link{display:flex;align-items:center;height:88px;padding:0 1.25rem;box-sizing:border-box;color:var(--hd-ink);text-decoration:none;font-weight:500;border-bottom:4px solid transparent;padding-top:4px}
+.header__nav-link:hover,.header__nav-link:focus-visible,.header__nav-link[aria-current="page"]{color:var(--hd-accent);border-bottom-color:var(--hd-accent)}
+.header__nav-link:focus-visible{outline:2px solid var(--hd-accent);outline-offset:-2px}
+.header__utils{margin-left:auto;display:none;align-items:center;gap:1.75rem}
+.header__util{display:inline-flex;align-items:center;gap:.5rem;color:var(--hd-accent);text-decoration:none;font-weight:600}
+.header__util:hover{text-decoration:underline}
+.header__util:focus-visible{outline:2px solid var(--hd-accent);outline-offset:2px}
+.header__menu-checkbox{position:absolute;opacity:0;pointer-events:none}
+.header__menu-button{margin-left:auto;display:inline-flex;align-items:center;justify-content:center;width:44px;height:44px;cursor:pointer;color:var(--hd-accent)}
+.header__menu-button .header__icon-close{display:none}
+.header__menu-checkbox:checked~.header__bar .header__icon-open{display:none}
+.header__menu-checkbox:checked~.header__bar .header__icon-close{display:block}
+.header__menu-checkbox:focus-visible~.header__bar .header__menu-button{outline:2px solid var(--hd-accent)}
+.header__drawer{display:none;border-top:1px solid var(--color-border-default);padding:.5rem 1rem 1rem}
+.header__menu-checkbox:checked~.header__drawer{display:block}
+.header__drawer .header__nav-list{flex-direction:column}
+.header__drawer .header__nav-link{height:auto;padding:.875rem .25rem;border-bottom:none;border-left:4px solid transparent;padding-left:.75rem}
+.header__drawer .header__nav-link:hover,.header__drawer .header__nav-link[aria-current="page"]{border-left-color:var(--hd-accent)}
+.header__drawer .header__utils{display:flex;margin:.75rem 0 0;padding:.75rem 0 0;border-top:1px solid var(--color-border-default)}
+@container (min-width:1024px){.header__bar{padding:0 2rem}.header__nav{display:block}.header__bar .header__utils{display:flex}.header__menu-button{display:none}.header__drawer{display:none!important}}

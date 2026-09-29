@@ -1,0 +1,6 @@
+/* Page-level rhythm rules for template composition. Not component
+   CSS — components stay untouched; applied by page templates that
+   stack a Heading Block card-zone intro against the cards below. */
+.heading-block.tpl-section-heading{padding-bottom:48px}
+.heading-block.tpl-section-heading>:last-child{margin-bottom:0}
+section.tpl-card-section{padding-top:0!important}

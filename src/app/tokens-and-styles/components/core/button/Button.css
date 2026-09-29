@@ -1,0 +1,26 @@
+.btn{display:inline-block;font-family:var(--btn-font);font-size:1rem;font-weight:600;line-height:1.5;text-decoration:none;text-align:center;cursor:pointer;padding:.75rem 1.75rem;border-radius:var(--btn-radius);border:2px solid transparent}
+.btn--primary{color:var(--color-button-primary-content-default);background:var(--color-button-primary-bg-default);border-color:var(--color-button-primary-bg-default)}
+.btn--primary:hover{background:var(--color-button-primary-bg-hover);border-color:var(--color-button-primary-bg-hover)}
+.btn--primary:active{background:var(--color-button-primary-bg-active);border-color:var(--color-button-primary-bg-active)}
+.btn--primary:focus-visible{background:var(--color-button-primary-bg-hover);border-color:var(--color-button-primary-bg-hover);outline:2px solid var(--color-button-primary-focus-ring);outline-offset:2px}
+.btn--primary[disabled],.btn--primary[aria-disabled="true"]{color:var(--color-button-primary-content-disabled);background:var(--color-button-primary-bg-disabled);border-color:var(--color-button-primary-bg-disabled);pointer-events:none}
+.btn--secondary{color:var(--color-button-secondary-content-default);background:transparent;border-color:var(--color-button-secondary-border-default)}
+.btn--secondary:hover{color:var(--color-button-secondary-content-hover);background:var(--color-button-secondary-bg-hover);border-color:var(--color-button-secondary-border-hover)}
+.btn--secondary:active{color:var(--color-button-secondary-content-active);background:var(--color-button-secondary-bg-active);border-color:var(--color-button-secondary-border-active)}
+.btn--secondary:focus-visible{color:var(--color-button-secondary-content-hover);background:var(--color-button-secondary-bg-focus);border-color:var(--color-button-secondary-border-hover);outline:2px solid var(--color-button-secondary-focus-ring);outline-offset:2px}
+.btn--secondary[disabled],.btn--secondary[aria-disabled="true"]{color:var(--color-button-secondary-content-disabled);background:var(--color-button-secondary-bg-disabled);border-color:var(--color-button-secondary-border-disabled);pointer-events:none}
+.btn--primary.btn--inverse{color:var(--color-button-accent-content);background:var(--color-button-accent-bg);border-color:var(--color-button-accent-bg)}
+.btn--primary.btn--inverse:hover{background:var(--color-button-accent-bg-hover);border-color:var(--color-button-accent-bg-hover)}
+.btn--primary.btn--inverse:active{background:var(--color-button-accent-bg-active);border-color:var(--color-button-accent-bg-active)}
+.btn--primary.btn--inverse:focus-visible{background:var(--color-button-accent-bg-hover);border-color:var(--color-button-accent-bg-hover);outline:2px solid var(--color-button-accent-focus-ring);outline-offset:2px}
+.btn--primary.btn--inverse[disabled],.btn--primary.btn--inverse[aria-disabled="true"]{color:var(--color-button-accent-content);background:var(--color-button-accent-bg-disabled);border-color:var(--color-button-accent-bg-disabled);pointer-events:none}
+.btn--secondary.btn--inverse{color:var(--color-button-accent-outline);background:transparent;border-color:var(--color-button-accent-outline)}
+.btn--secondary.btn--inverse:hover{color:var(--color-button-accent-outline-hover);background:var(--color-button-accent-outline-bg-hover);border-color:var(--color-button-accent-outline-hover)}
+.btn--secondary.btn--inverse:active{color:var(--color-button-accent-outline-active);background:var(--color-button-accent-outline-bg-active);border-color:var(--color-button-accent-outline-active)}
+.btn--secondary.btn--inverse:focus-visible{color:var(--color-button-accent-outline-hover);background:var(--color-button-accent-outline-bg-hover);border-color:var(--color-button-accent-outline-hover);outline:2px solid var(--color-button-accent-focus-ring);outline-offset:2px}
+.btn--secondary.btn--inverse[disabled],.btn--secondary.btn--inverse[aria-disabled="true"]{color:var(--color-button-accent-outline-disabled);background:transparent;border-color:var(--color-button-accent-outline-disabled);pointer-events:none}
+.button-group{font-family:var(--typography-body-font-family);color:var(--color-content-default);background:#fff;max-width:1440px;margin:0 auto;padding:2rem 1rem}
+.button-group__panel{display:flex;flex-wrap:wrap;align-items:center;gap:1.25rem;padding:2rem 1.5rem;border-radius:var(--border-radius-container)}
+.button-group--inverse .button-group__panel{background:var(--color-content-brand)}
+.button-group__note{margin:1rem 0 0;color:var(--color-content-subtle);font-size:.875rem}
+@container (min-width:1024px){.button-group{padding:3rem 7.5rem}.button-group__panel{padding:2.5rem}}

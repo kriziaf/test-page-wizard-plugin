@@ -1,0 +1,379 @@
+/* ============================================================
+   brands.css — semantic tokens resolved for four brand modes.
+   One [data-theme] block per brand; setting data-theme on any
+   ancestor themes everything below it. Mixed-theme pages are legal.
+   Values traced from the Figma variables.json export. Do not
+   hand-edit without updating the source export note below.
+   ============================================================ */
+
+[data-theme="evernorth"]{
+  --color-content-list-title: var(--color-content-brand);
+  --color-content-default:#2D2D2D;
+  --color-content-subtle:#6C6C6C;
+  --color-content-brand:#035C67;
+  --color-content-brand-strong:#035C67;
+  --color-content-link:#035C67;
+  --color-content-link-hover:#00363D;
+  --color-content-error:#D02525;
+  --color-content-inverse:#FFFFFF;
+  --color-content-inverse-default:#FFFFFF;
+
+  --color-border-default:#D5D5D5;
+
+  --color-button-primary-bg-default:#035C67;
+  --color-button-primary-bg-hover:#024A52;
+  --color-button-primary-bg-focus:#024A52;
+  --color-button-primary-bg-active:#012529;
+  --color-button-primary-content-default:#FFFFFF;
+  --color-button-primary-border-default:#035C67;
+  --color-button-primary-bg-disabled:#EAEAEA;
+  --color-button-primary-content-disabled:#949494;
+  --color-button-primary-focus-ring:#012529;
+
+  --color-button-secondary-bg-default:transparent;
+  --color-button-secondary-bg-hover:#EAF4F6;
+  --color-button-secondary-bg-focus:#EAF4F6;
+  --color-button-secondary-bg-active:#CCE7EA;
+  --color-button-secondary-content-default:#035C67;
+  --color-button-secondary-content-hover:#00363D;
+  --color-button-secondary-border-default:#035C67;
+  --color-button-secondary-border-hover:#00363D;
+  --color-button-secondary-content-active:#00171A;
+  --color-button-secondary-border-active:#00171A;
+  --color-button-secondary-bg-disabled:#EAEAEA;
+  --color-button-secondary-content-disabled:#999999;
+  --color-button-secondary-border-disabled:#ABABAB;
+  --color-button-secondary-focus-ring:#00171A;
+
+  --color-button-accent-bg:#00FEAF;
+  --color-button-accent-bg-hover:#12F3A9;
+  --color-button-accent-bg-active:#00D18D;
+  --color-button-accent-bg-disabled:#ABABAB;
+  --color-button-accent-content:#003034;
+  --color-button-accent-focus-ring:#12F3A9;
+  --color-button-accent-outline:#3EFFC0;
+  --color-button-accent-outline-hover:#12F3A9;
+  --color-button-accent-outline-active:#00D18D;
+  --color-button-accent-outline-disabled:#ABABAB;
+  --color-button-accent-outline-bg-hover:#003826;
+  --color-button-accent-outline-bg-active:#00171A;
+
+  --color-bg-hero-canvas:#F6F5F3;
+  --color-bg-brand-xstrong:#00363D;
+  --color-bg-chip:#E8FFF8; /* mockup mint; not in token JSON — flagged */
+
+  --shadow-default-color:#2D2D2D1A;
+
+  --border-radius-default:8px;
+  --border-radius-large:16px;
+  --border-radius-container:16px;
+  --border-radius-component-button:8px;
+  --border-radius-component-field:8px;
+
+  --typography-headline-font-family:'Inter', sans-serif;
+  --typography-body-font-family:'Inter', sans-serif;
+  --typography-headline-default-font-size:2.5rem;
+  --typography-headline-default-line-height:3.5rem;
+  --typography-headline-default-font-weight:600;
+  --typography-headline-default-mobile-font-size:2rem;
+  --typography-headline-default-mobile-line-height:2.5rem;
+  --typography-headline-small-font-size:2rem;
+  --typography-headline-small-line-height:2.5rem;
+  --typography-headline-small-font-weight:600;
+  --typography-headline-small-mobile-font-size:1.75rem;
+  --typography-headline-xsmall-font-size:1.5rem;
+  --typography-headline-xsmall-line-height:2rem;
+  --typography-headline-xsmall-font-weight:600;
+  --typography-display-small-font-size:3rem;
+  --typography-display-small-line-height:1.15;
+  --typography-body-default-font-size:1rem;
+  --typography-body-default-line-height:1.5rem;
+  --typography-body-default-font-weight:400;
+  --typography-label-default-font-size:1rem;
+  --typography-label-default-line-height:1.5rem;
+  --typography-label-default-font-weight:500;
+  --typography-label-default-letter-spacing:0;
+  --typography-meta-default-font-size:1rem;
+  --typography-meta-default-line-height:1.5rem;
+  --typography-meta-default-font-weight:700;
+}
+
+[data-theme="tcg"]{
+  --color-content-list-title: var(--color-content-brand);
+  --color-content-default:#333333;
+  --color-content-subtle:#5C5C5C;
+  --color-content-brand:#0033FF;
+  --color-content-brand-strong:#110081;
+  --color-content-link:#0033FF;
+  --color-content-link-hover:#110081;
+  --color-content-error:#BA0000;
+  --color-content-inverse:#FFFFFF;
+  --color-content-inverse-default:#FFFFFF;
+
+  --color-border-default:#D6D6D6;
+
+  --color-button-primary-bg-default:#0033FF;
+  --color-button-primary-bg-hover:#001F99;
+  --color-button-primary-bg-focus:#001F99;
+  --color-button-primary-bg-active:#001466;
+  --color-button-primary-content-default:#FFFFFF;
+  --color-button-primary-border-default:#0033FF;
+  --color-button-primary-bg-disabled:#EAEAEA;
+  --color-button-primary-content-disabled:#949494;
+  --color-button-primary-focus-ring:#001466;
+
+  --color-button-secondary-bg-default:transparent;
+  --color-button-secondary-bg-hover:#E6EBFF;
+  --color-button-secondary-bg-focus:#E6EBFF;
+  --color-button-secondary-bg-active:#CCD6FF;
+  --color-button-secondary-content-default:#0033FF;
+  --color-button-secondary-content-hover:#0033FF;
+  --color-button-secondary-border-default:#0033FF;
+  --color-button-secondary-border-hover:#0033FF;
+  --color-button-secondary-content-active:#0033FF;
+  --color-button-secondary-border-active:#0033FF;
+  --color-button-secondary-bg-disabled:#EAEAEA;
+  --color-button-secondary-content-disabled:#999999;
+  --color-button-secondary-border-disabled:#ABABAB;
+  --color-button-secondary-focus-ring:#001466;
+
+  /* Inverse (accent) set derived: white-on-brand (no accent spec for this brand) */
+  --color-button-accent-bg:#FFFFFF;
+  --color-button-accent-bg-hover:#E6E6E6;
+  --color-button-accent-bg-active:#CCCCCC;
+  --color-button-accent-bg-disabled:#ABABAB;
+  --color-button-accent-content:#202427;
+  --color-button-accent-focus-ring:#FFFFFF;
+  --color-button-accent-outline:#FFFFFF;
+  --color-button-accent-outline-hover:#E6E6E6;
+  --color-button-accent-outline-active:#CCCCCC;
+  --color-button-accent-outline-disabled:#ABABAB;
+  --color-button-accent-outline-bg-hover:rgba(255,255,255,0.12);
+  --color-button-accent-outline-bg-active:rgba(255,255,255,0.2);
+
+  --color-bg-hero-canvas:#F6F5F3;
+  --color-bg-brand-xstrong:#110081;
+  --color-bg-chip:#E6EBFF; /* derived: secondary hover wash */
+
+  --shadow-default-color:#3333331A;
+
+  --border-radius-default:8px;
+  --border-radius-large:30px;
+  --border-radius-container:30px;
+  --border-radius-component-button:900px;
+  --border-radius-component-field:8px;
+
+  --typography-headline-font-family:'Montserrat', sans-serif;
+  --typography-body-font-family:'Montserrat', sans-serif;
+  --typography-headline-default-font-size:2.5rem;
+  --typography-headline-default-line-height:3.5rem;
+  --typography-headline-default-font-weight:700;
+  --typography-headline-default-mobile-font-size:2rem;
+  --typography-headline-default-mobile-line-height:2.5rem;
+  --typography-headline-small-font-size:2rem;
+  --typography-headline-small-line-height:2.5rem;
+  --typography-headline-small-font-weight:700;
+  --typography-headline-small-mobile-font-size:1.75rem;
+  --typography-headline-xsmall-font-size:1.5rem;
+  --typography-headline-xsmall-line-height:2rem;
+  --typography-headline-xsmall-font-weight:700;
+  --typography-display-small-font-size:3rem;
+  --typography-display-small-line-height:1.15;
+  --typography-body-default-font-size:1rem;
+  --typography-body-default-line-height:1.5rem;
+  --typography-body-default-font-weight:400;
+  --typography-label-default-font-size:1rem;
+  --typography-label-default-line-height:1.5rem;
+  --typography-label-default-font-weight:600;
+  --typography-label-default-letter-spacing:0;
+  --typography-meta-default-font-size:1rem;
+  --typography-meta-default-line-height:1.5rem;
+  --typography-meta-default-font-weight:500;
+}
+
+[data-theme="chc"]{
+  --color-content-list-title: var(--color-content-brand);
+  --color-content-default:#333333;
+  --color-content-subtle:#5C5C5C;
+  --color-content-brand:#0033FF;
+  --color-content-brand-strong:#110081;
+  --color-content-link:#0033FF;
+  --color-content-link-hover:#110081;
+  --color-content-error:#BA0000;
+  --color-content-inverse:#FFFFFF;
+  --color-content-inverse-default:#FFFFFF;
+
+  --color-border-default:#D6D6D6;
+
+  --color-button-primary-bg-default:#0033FF;
+  --color-button-primary-bg-hover:#001F99;
+  --color-button-primary-bg-focus:#001F99;
+  --color-button-primary-bg-active:#001466;
+  --color-button-primary-content-default:#FFFFFF;
+  --color-button-primary-border-default:#0033FF;
+  --color-button-primary-bg-disabled:#EAEAEA;
+  --color-button-primary-content-disabled:#949494;
+  --color-button-primary-focus-ring:#001466;
+
+  --color-button-secondary-bg-default:transparent;
+  --color-button-secondary-bg-hover:#E6EBFF;
+  --color-button-secondary-bg-focus:#E6EBFF;
+  --color-button-secondary-bg-active:#CCD6FF;
+  --color-button-secondary-content-default:#0033FF;
+  --color-button-secondary-content-hover:#0033FF;
+  --color-button-secondary-border-default:#0033FF;
+  --color-button-secondary-border-hover:#0033FF;
+  --color-button-secondary-content-active:#0033FF;
+  --color-button-secondary-border-active:#0033FF;
+  --color-button-secondary-bg-disabled:#EAEAEA;
+  --color-button-secondary-content-disabled:#999999;
+  --color-button-secondary-border-disabled:#ABABAB;
+  --color-button-secondary-focus-ring:#001466;
+
+  /* PROVISIONAL: inverse set not spec'd for this brand */
+  --color-button-accent-bg:#FFFFFF;
+  --color-button-accent-content:#0033FF;
+  --color-button-accent-outline:#FFFFFF;
+  --color-button-accent-bg-hover:#E6E6E6;
+  --color-button-accent-bg-active:#CCCCCC;
+  --color-button-accent-bg-disabled:#ABABAB;
+  --color-button-accent-focus-ring:#FFFFFF;
+  --color-button-accent-outline-hover:#E6E6E6;
+  --color-button-accent-outline-active:#CCCCCC;
+  --color-button-accent-outline-disabled:#ABABAB;
+  --color-button-accent-outline-bg-hover:rgba(255,255,255,0.12);
+  --color-button-accent-outline-bg-active:rgba(255,255,255,0.2);
+
+  --color-bg-hero-canvas:#F6F5F3;
+  --color-bg-brand-xstrong:#110081;
+  --color-bg-chip:#E6EBFF;
+
+  --shadow-default-color:#3333331A;
+
+  --border-radius-default:8px;
+  --border-radius-large:30px;
+  --border-radius-container:30px;
+  --border-radius-component-button:900px;
+  --border-radius-component-field:8px;
+
+  /* Value Serif Pro / Value Sans Pro: licensed webfonts pending — falls back */
+  --typography-headline-font-family:'Value Serif Pro', Georgia, serif;
+  --typography-body-font-family:'Value Sans Pro', 'Helvetica Neue', Arial, sans-serif;
+  --typography-headline-default-font-size:2.5rem;
+  --typography-headline-default-line-height:3.5rem;
+  --typography-headline-default-font-weight:700;
+  --typography-headline-default-mobile-font-size:2rem;
+  --typography-headline-default-mobile-line-height:2.5rem;
+  --typography-headline-small-font-size:2rem;
+  --typography-headline-small-line-height:2.5rem;
+  --typography-headline-small-font-weight:700;
+  --typography-headline-small-mobile-font-size:1.75rem;
+  --typography-headline-xsmall-font-size:1.5rem;
+  --typography-headline-xsmall-line-height:2rem;
+  --typography-headline-xsmall-font-weight:700;
+  --typography-display-small-font-size:3rem;
+  --typography-display-small-line-height:1.15;
+  --typography-body-default-font-size:1rem;
+  --typography-body-default-line-height:1.5rem;
+  --typography-body-default-font-weight:400;
+  --typography-label-default-font-size:1rem;
+  --typography-label-default-line-height:1.5rem;
+  --typography-label-default-font-weight:500;
+  --typography-label-default-letter-spacing:0;
+  --typography-meta-default-font-size:1rem;
+  --typography-meta-default-line-height:1.5rem;
+  --typography-meta-default-font-weight:500;
+}
+
+[data-theme="white-label"]{
+  --color-content-default:#202427;
+  --color-content-subtle:#4D5052;
+  --color-content-brand:#0033FF;
+  --color-content-list-title:#333333;
+  --color-content-brand-strong:#333333;
+  --color-content-link:#0033FF;
+  --color-content-link-hover:#110081;
+  --color-content-error:#BA0000;
+  --color-content-inverse:#FFFFFF;
+  --color-content-inverse-default:#FFFFFF;
+
+  --color-border-default:#D2D3D4;
+
+  --color-button-primary-bg-default:#202427;
+  --color-button-primary-bg-hover:#1A1D1F;
+  --color-button-primary-bg-focus:#1A1D1F;
+  --color-button-primary-bg-active:#131617;
+  --color-button-primary-content-default:#FFFFFF;
+  --color-button-primary-border-default:#202427;
+  --color-button-primary-bg-disabled:#EAEAEA;
+  --color-button-primary-content-disabled:#949494;
+  --color-button-primary-focus-ring:#131617;
+
+  --color-button-secondary-bg-default:transparent;
+  --color-button-secondary-bg-hover:#E9E9E9;
+  --color-button-secondary-bg-focus:#E9E9E9;
+  --color-button-secondary-bg-active:#D2D3D4;
+  --color-button-secondary-content-default:#202427;
+  --color-button-secondary-content-hover:#1A1D1F;
+  --color-button-secondary-border-default:#202427;
+  --color-button-secondary-border-hover:#1A1D1F;
+  --color-button-secondary-content-active:#1A1D1F;
+  --color-button-secondary-border-active:#1A1D1F;
+  --color-button-secondary-bg-disabled:#EAEAEA;
+  --color-button-secondary-content-disabled:#999999;
+  --color-button-secondary-border-disabled:#ABABAB;
+  --color-button-secondary-focus-ring:#131617;
+
+  /* PROVISIONAL: inverse set not spec'd for this brand */
+  --color-button-accent-bg:#FFFFFF;
+  --color-button-accent-content:#202427;
+  --color-button-accent-outline:#FFFFFF;
+  --color-button-accent-bg-hover:#E6E6E6;
+  --color-button-accent-bg-active:#CCCCCC;
+  --color-button-accent-bg-disabled:#ABABAB;
+  --color-button-accent-focus-ring:#FFFFFF;
+  --color-button-accent-outline-hover:#E6E6E6;
+  --color-button-accent-outline-active:#CCCCCC;
+  --color-button-accent-outline-disabled:#ABABAB;
+  --color-button-accent-outline-bg-hover:rgba(255,255,255,0.12);
+  --color-button-accent-outline-bg-active:rgba(255,255,255,0.2);
+
+  --color-bg-hero-canvas:#F6F5F3;
+  --color-bg-brand-xstrong:#202427;
+  --color-bg-chip:#E9E9E9;
+
+  --shadow-default-color:#0000001A;
+
+  --border-radius-default:12px;
+  --border-radius-large:24px;
+  --border-radius-container:24px;
+  --border-radius-component-button:12px;
+  --border-radius-component-field:12px;
+
+  --typography-headline-font-family:'Nunito', sans-serif;
+  --typography-body-font-family:'Nunito', sans-serif;
+  --typography-headline-default-font-size:2.5rem;
+  --typography-headline-default-line-height:3.5rem;
+  --typography-headline-default-font-weight:700;
+  --typography-headline-default-mobile-font-size:2rem;
+  --typography-headline-default-mobile-line-height:2.5rem;
+  --typography-headline-small-font-size:2rem;
+  --typography-headline-small-line-height:2.5rem;
+  --typography-headline-small-font-weight:700;
+  --typography-headline-small-mobile-font-size:2rem;
+  --typography-headline-xsmall-font-size:1.75rem;
+  --typography-headline-xsmall-line-height:2.5rem;
+  --typography-headline-xsmall-font-weight:700;
+  --typography-display-small-font-size:3rem;
+  --typography-display-small-line-height:1.15;
+  --typography-body-default-font-size:1rem;
+  --typography-body-default-line-height:1.5rem;
+  --typography-body-default-font-weight:400;
+  --typography-label-default-font-size:1rem;
+  --typography-label-default-line-height:1.5rem;
+  --typography-label-default-font-weight:600;
+  --typography-label-default-letter-spacing:0;
+  --typography-meta-default-font-size:0.875rem;
+  --typography-meta-default-line-height:1rem;
+  --typography-meta-default-font-weight:400;
+}

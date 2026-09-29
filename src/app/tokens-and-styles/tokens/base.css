@@ -1,0 +1,7 @@
+/* Shared library layer. Every component renders inside a
+   .component-viewport so breakpoints respond to container width
+   (container queries only — never viewport media queries). */
+.component-viewport{container-type:inline-size}
+img{max-width:100%;height:auto;display:block}
+*{box-sizing:border-box}
+body{margin:0}

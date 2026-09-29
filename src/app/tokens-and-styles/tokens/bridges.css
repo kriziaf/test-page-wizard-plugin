@@ -1,0 +1,114 @@
+/* ============================================================
+   bridges.css — component bridge variables. Each component
+   claims a short --<ns>-* namespace mapped to the semantic
+   tokens above. Component CSS never reads semantic tokens
+   directly (button excepted — its tokens are already
+   button-scoped).
+   ============================================================ */
+
+.text-and-image{
+  --tai-ink: var(--color-content-default);
+  --tai-subtle: var(--color-content-subtle);
+  --tai-accent: var(--color-content-brand);
+  --tai-title-ink: var(--color-content-brand-strong);
+  --tai-font: var(--typography-body-font-family);
+  --tai-headline-font: var(--typography-headline-font-family);
+  --tai-radius: var(--border-radius-large);
+}
+.form{
+  --form-ink: var(--color-content-default);
+  --form-subtle: var(--color-content-subtle);
+  --form-accent: var(--color-content-brand);
+  --form-title-ink: var(--color-content-brand-strong);
+  --form-font: var(--typography-body-font-family);
+  --form-headline-font: var(--typography-headline-font-family);
+  --form-border: var(--color-content-subtle);
+  --form-field-radius: var(--border-radius-component-field);
+}
+.list-item{
+  --li-ink: var(--color-content-default);
+  --li-subtle: var(--color-content-subtle);
+  --li-accent: var(--color-content-brand);
+  --li-link: var(--color-content-link);
+  --li-link-hover: var(--color-content-link-hover);
+  --li-font: var(--typography-body-font-family);
+  --li-headline-font: var(--typography-headline-font-family);
+  --li-item-title: var(--color-content-list-title);
+  --li-accent-badge: var(--color-content-brand);
+}
+.external-link-cards{
+  --elc-ink: var(--color-content-default);
+  --elc-accent: var(--color-content-brand);
+  --elc-link: var(--color-content-link);
+  --elc-link-hover: var(--color-content-link-hover);
+  --elc-border: var(--color-border-default);
+  --elc-font: var(--typography-body-font-family);
+  --elc-headline-font: var(--typography-headline-font-family);
+  --elc-radius: var(--border-radius-container);
+  --elc-chip-bg: var(--color-bg-chip);
+  --elc-hover-bg: var(--color-button-secondary-bg-hover);
+  --elc-pressed-bg: var(--color-button-secondary-bg-active);
+  --elc-item-title: var(--color-content-list-title);
+}
+.heading-block{
+  --hb-ink: var(--color-content-default);
+  --hb-subtle: var(--color-content-subtle);
+  --hb-accent: var(--color-content-brand);
+  --hb-title-ink: var(--color-content-brand-strong);
+  --hb-font: var(--typography-body-font-family);
+  --hb-headline-font: var(--typography-headline-font-family);
+}
+.header{
+  --hd-ink: var(--color-content-default);
+  --hd-accent: var(--color-content-brand);
+  --hd-font: var(--typography-body-font-family);
+  --hd-shadow: var(--shadow-default-color);
+}
+.horizontal-cards{
+  --hc-ink: var(--color-content-default);
+  --hc-subtle: var(--color-content-subtle);
+  --hc-accent: var(--color-content-brand);
+  --hc-link: var(--color-content-link);
+  --hc-link-hover: var(--color-content-link-hover);
+  --hc-border: var(--color-border-default);
+  --hc-font: var(--typography-body-font-family);
+  --hc-headline-font: var(--typography-headline-font-family);
+  --hc-radius: var(--border-radius-container);
+  --hc-item-title: var(--color-content-list-title);
+}
+.hero{
+  --hero-ink: var(--color-content-default);
+  --hero-inverse-ink: var(--color-content-inverse);
+  --hero-accent: var(--color-content-brand);
+  --hero-font: var(--typography-body-font-family);
+  --hero-headline-font: var(--typography-headline-font-family);
+  --hero-panel-light: var(--color-button-secondary-bg-hover);
+  --hero-panel-dark: var(--color-content-brand);
+  --hero-canvas: var(--color-bg-hero-canvas);
+  --hero-radius: var(--border-radius-default);
+}
+.btn{
+  --btn-font: var(--typography-body-font-family);
+  --btn-radius: var(--border-radius-default);
+}
+.testimonial{
+  --tst-ink: var(--color-content-default);
+  --tst-subtle: var(--color-content-subtle);
+  --tst-accent: var(--color-content-brand);
+  --tst-title-ink: var(--color-content-brand-strong);
+  --tst-link: var(--color-content-link);
+  --tst-link-hover: var(--color-content-link-hover);
+  --tst-font: var(--typography-body-font-family);
+  --tst-headline-font: var(--typography-headline-font-family);
+  --tst-radius: var(--border-radius-container);
+  --tst-shadow: var(--shadow-default-color);
+}
+.highlight-bar{
+  --hlb-bg: var(--color-bg-brand-xstrong);
+  --hlb-ink: var(--color-content-inverse-default);
+  --hlb-ink-subtle: rgba(255,255,255,0.72);
+  --hlb-icon-bg: rgba(255,255,255,0.15);
+  --hlb-divider: rgba(255,255,255,0.15);
+  --hlb-font: var(--typography-body-font-family);
+  --hlb-headline-font: var(--typography-headline-font-family);
+}
