@@ -7,11 +7,12 @@ This directory contains architecture decisions for the Page Builder plugin, capt
 | ADR | Title | Status | Date | Context |
 |-----|-------|--------|------|---------|
 | [0001](./0001-plugin-plus-skills-architecture.md) | Plugin + Skills Architecture | Accepted | 2026-09-29 | How to structure the plugin for cross-team extensibility and repeatable invocation |
-| [0002](#) | Content Brief Form Structure | *Proposed* | — | Form fields, validation rules, content guidance integration |
-| [0003](#) | Generation Output Strategy | *Proposed* | — | React/HTML code generation + Figma file sync approach |
+| [0002](./0002-page-type-selection-update.md) | Page Type Selection Update: Blog & Search Results | Accepted | 2026-09-29 | Update page types to align with actual marketing workflows |
+| [0003](./0003-generation-output-strategy.md) | Generation Output Strategy: V1 HTML, V2 Figma | Accepted | 2026-09-29 | V1 ships HTML-only with mock example; Figma integration deferred to v2 |
 | [0004](#) | Pattern Data Source Integration | *Proposed* | — | How to connect Figma/Storybook pattern documentation |
-| [0005](#) | Content Validation & Enforcement | *Proposed* | — | Rules engine for character limits, required fields, restricted patterns |
-| [0006](#) | Voice & Tone Guidelines Integration | *Proposed* | — | How to layer in brand voice/tone per page type |
+| [0005](#) | Content Brief Form Structure | *Proposed* | — | Form fields, validation rules, content guidance integration |
+| [0006](#) | Content Validation & Enforcement | *Proposed* | — | Rules engine for character limits, required fields, restricted patterns |
+| [0007](#) | Voice & Tone Guidelines Integration | *Proposed* | — | How to layer in brand voice/tone per page type |
 
 ## How to Use
 
