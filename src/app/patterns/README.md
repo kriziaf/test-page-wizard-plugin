@@ -89,6 +89,32 @@ A full-width editorial section for displaying dense, structured text content —
 - **Content:** Headline (1 line, bold)
 - **Use when:** Content is primarily text-driven — program overviews, benefits breakdowns, or curated resource lists where the text itself is the primary value.
 
+### Highlight Band
+
+A full-width social-proof section that showcases key metrics or feature highlights in a centered, evenly spaced row beneath a headline.
+
+- **Variants:** Type: Metrics or List
+  - Metrics: 3 large stat figures with captions (e.g. "2M+", "4.8★", "<10 min")
+  - List: 3 icon-led feature cards, each with a title and short description
+  - Background: Brand (dark/teal) or Subtle (light gray)
+- **Content:** Headline (1 line, semi-bold); 3 columns, each with:
+  - Metrics: bold stat + caption
+  - List: icon + bold title + 2–3 line description
+- **Use when:** Building trust with quantitative proof points, summarizing service advantages at a glance, or breaking up long-form content with a visually distinct stats band.
+
+### Highlight Band
+
+A full-width social-proof section that showcases key metrics or feature highlights in a centered, evenly spaced row beneath a headline.
+
+- **Variants:** Type: Metrics or List
+  - Metrics: 3 large stat figures with captions (e.g. "2M+", "4.8★", "<10 min")
+  - List: 3 icon-led feature cards, each with a title and short description
+- **Variants:** Background: Brand (dark/teal) or Subtle (light gray)
+- **Content:** Headline (1 line, semi-bold); 3 columns, each with:
+  - Metrics: bold stat + caption
+  - List: icon + bold title + 2–3 line description
+- **Use when:** Building trust with quantitative proof points, summarizing service advantages at a glance, or breaking up long-form content with a visually distinct stats band.
+
 ---
 
 ## Functional Patterns

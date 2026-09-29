@@ -116,7 +116,7 @@ At Step 6 the user generates a mock example of the page, stacked from the patter
 ### Functional Requirements
 
 - **FR-001**: The system MUST offer exactly four page types in Step 2: Business Page, Article, Blog, Services. Bio is removed. Search Results is not offered in v0.1.1.
-- **FR-002**: The system MUST provide a recommended section list for each of the four page types, each section mapped to one approved pattern with at least one variant. The approved patterns are the thirteen in `src/app/patterns/README.md`: Overview Cards, Accent Cards, Graphic Cards, Horizontal Cards, External Link Cards, Bullet Image, Text Media, Expanded Text, Longform Text, Hero Primary, Hero Secondary, Two-Col Form, Promo Banner Card. Pattern and variant names follow that document. Recommended sections per page type are listed under "Recommended Sections" below. Hero Primary is used on Business Page and Services only. Highlight Band (stats band, `subtle` and `brand`) is a fourteenth pattern added after the documented set; its documentation is not yet written.
+- **FR-002**: The system MUST provide a recommended section list for each of the four page types, each section mapped to one approved pattern with at least one variant. The approved patterns are the fourteen in `src/app/patterns/README.md`: Overview Cards, Accent Cards, Graphic Cards, Horizontal Cards, External Link Cards, Bullet Image, Text Media, Expanded Text, Longform Text, Hero Primary, Hero Secondary, Two-Col Form, Promo Banner Card, Highlight Band. Pattern and variant names follow that document. Recommended sections per page type are listed under "Recommended Sections" below. Hero Primary is used on Business Page and Services only. Highlight Band (stats band) is the fourteenth pattern, also documented in the README.
 - **FR-003**: The system MUST mark required sections and prevent their removal.
 - **FR-004**: Step 1 MUST keep Single page as the only available scope; Multi-page set MUST show as unavailable.
 - **FR-005**: The system MUST capture the seven brief fields and require Audience to continue.
@@ -151,7 +151,7 @@ Notes: Services was validated against the four reference templates in `src/app/p
 
 - **Page type**: One of four templates; determines the starting section list.
 - **Section**: A named block on the page mapped to a pattern; has a selected variant, an order position, and a required flag.
-- **Pattern**: An approved building block (fourteen kinds; thirteen documented in `src/app/patterns/README.md`, plus Highlight Band) with named variants.
+- **Pattern**: An approved building block (fourteen kinds, documented in `src/app/patterns/README.md`) with named variants.
 - **Pattern SVG**: A wireframe-style drawing of one pattern variant, supplied by the project owner. It is the only visual used for that variant in the mock page. Not a production component.
 - **Content brief**: Seven text fields plus an optional pasted text brief.
 - **Generated page**: The mock page produced from page type, brief, and sections, and its HTML export.

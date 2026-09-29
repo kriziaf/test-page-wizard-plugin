@@ -60,13 +60,13 @@ Source of truth for pattern names, variants, and guidance: `src/app/patterns/REA
 | text-media | `image-left-photo`, `image-left-video`, `text-left-photo`, `text-left-video` |
 | expanded-text | `centered-2-col`, `split-1-col`, `centered-3-col`, `split-2-col` |
 | longform-text | `paragraph`, `bullet-list`, `resource-list` |
-| highlight-band | `subtle`, `brand` |
+| highlight-band | `subtle`, `brand`, `complex-subtle`, `complex-brand` |
 | hero-primary | `image-overlay`, `form-image`, `split-media` |
 | hero-secondary | `brand-strong`, `bright-green`, `subtle` |
 | two-col-form | `subtle`, `brand` |
 | promo-banner-card | `image-led-brand`, `image-led-subtle`, `branded-cta`, `simple-cta` |
 
-That is 41 SVGs (fourteen patterns, counting Highlight Band, the stats band added after the thirteen documented ones; it has no entry in `README.md` yet). Card pattern variants (overview, accent, graphic, horizontal, external link) are not in the pattern documentation, so their names describe the drawings the owner made.
+That is 43 SVGs across fourteen patterns. Highlight Band (the stats band) was added after the first thirteen and is documented in `README.md`. Card pattern variants (overview, accent, graphic, horizontal, external link) are not in the pattern documentation, so their names describe the drawings the owner made.
 
 Variant naming rule: where a pattern has a gray treatment and a tinted-green treatment, they are called `subtle` (gray) and `brand` (tinted green).
 
