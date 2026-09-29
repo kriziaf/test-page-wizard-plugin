@@ -47,15 +47,15 @@ Carried over from the former ADR log. Rationale and alternatives are in [researc
 
 ## Pattern Registry (new)
 
-Source of truth for pattern names, variants, and guidance: `src/app/patterns/README.md`. Drawings live beside it as `{pattern}--{variant}.svg`, one file per variant, all drawn by the project owner. Patterns with no documented variants use `--default`.
+Source of truth for pattern names, variants, and guidance: `src/app/patterns/README.md`. Drawings live beside it as `{pattern}--{variant}.svg`, one file per variant, all drawn by the project owner. Variant names come from the pattern documentation; where it lists none (the card patterns), the name describes the drawing.
 
 | Pattern | SVG files (`{pattern}--{variant}.svg`) |
 |---------|----------------------------------------|
-| overview-cards | `default` |
-| accent-cards | `default` |
-| graphic-cards | `default` |
-| horizontal-cards | `default` |
-| external-link-cards | `default` |
+| overview-cards | `stacked-right`, `grid-3-up`, `grid-2-up` |
+| accent-cards | `tinted`, `neutral` |
+| graphic-cards | `illustration`, `icon` |
+| horizontal-cards | `1-col-large`, `2-col-compact`, `2-col` |
+| external-link-cards | `compact`, `icon-heading-body`, `text-only` |
 | bullet-image | `icon-bullets`, `simple-bullets`, `grid` |
 | text-media | `image-left-photo`, `image-left-video`, `text-left-photo`, `text-left-video` |
 | expanded-text | `centered-2-col`, `split-1-col`, `centered-3-col`, `split-2-col` |
@@ -65,7 +65,7 @@ Source of truth for pattern names, variants, and guidance: `src/app/patterns/REA
 | two-col-form | `default`, `tinted-form` |
 | promo-banner-card | `image-led`, `branded-cta`, `simple-cta` |
 
-That is 30 SVGs.
+That is 38 SVGs. Card pattern variants (overview, accent, graphic, horizontal, external link) are not in the pattern documentation, so their names describe the drawings the owner made. Longform Text and the four Functional patterns are not yet drawn or renamed.
 
 How it works:
 

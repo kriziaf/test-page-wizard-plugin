@@ -124,7 +124,7 @@ At Step 6 the user generates a mock example of the page, stacked from the patter
 - **FR-007**: Users MUST be able to add, remove, reorder sections and change variants in Step 5. Add section MUST offer the approved sections for the page type that are not currently on the page.
 - **FR-008**: Step 6 MUST show a brief summary and section structure before generating.
 - **FR-009**: Step 6 MUST generate a mock page by stacking, in order, the SVG for each selected section's pattern and variant.
-- **FR-010**: Patterns and variants MUST be registered from a folder of SVGs in the repository, named `{pattern}--{variant}.svg`. Adding a correctly named SVG makes that variant available with no code change. Patterns with no documented variants use `--default`.
+- **FR-010**: Patterns and variants MUST be registered from a folder of SVGs in the repository, named `{pattern}--{variant}.svg`. Adding a correctly named SVG makes that variant available with no code change. Variant names come from the pattern documentation; where it lists none (the card patterns), the name describes the drawing.
 - **FR-011**: A pattern variant with no SVG MUST render as a labeled placeholder block, and the system MUST report registered patterns and variants that are missing an SVG during development.
 - **FR-012**: The system MUST export the mock page as a single standalone HTML file with the SVGs included.
 - **FR-013**: The system MUST show Figma export as unavailable ("v2") and MUST NOT attempt it.
