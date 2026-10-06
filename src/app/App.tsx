@@ -637,22 +637,72 @@ function Step3({
 
 // ── Step 4: Architecture ──────────────────────────────────────────────────
 interface HeroContent {
+  text: string;
+}
+
+const GENERATED_HERO_COPY = [
+  "Evernorth EnGuide℠ Pharmacy",
+  "Support on your GLP-1 journey",
+  "Held to the highest standards under the Evernorth® brand, our team of specially trained pharmacists are readily available to address your needs and work directly with your doctor to help you save money, discuss treatment options, and more.",
+  "Log in",
+  "Learn more",
+].join("\n");
+
+const DEFAULT_HERO: HeroContent = {
+  text: GENERATED_HERO_COPY,
+};
+
+/** Heuristic "smart refine" of a single freeform text block into hero card fields. */
+function parseHeroText(text: string): {
+  eyebrow: string;
   headline: string;
-  subheadline: string;
   body: string;
   primaryCta: string;
   secondaryCta: string;
+} {
+  const lines = text.split("\n").map((l) => l.trim()).filter(Boolean);
+  const isCtaLike = (l: string) => l.length <= 28 && !/[.!?]$/.test(l);
+
+  let secondaryCta = "";
+  let primaryCta = "";
+  const rest = [...lines];
+  if (rest.length > 1 && isCtaLike(rest[rest.length - 1])) {
+    secondaryCta = rest.pop()!;
+  }
+  if (rest.length > 1 && isCtaLike(rest[rest.length - 1])) {
+    primaryCta = rest.pop()!;
+  }
+  // A lone trailing CTA-like line should be treated as the primary, not secondary.
+  if (!primaryCta && secondaryCta) {
+    primaryCta = secondaryCta;
+    secondaryCta = "";
+  }
+
+  let eyebrow = "";
+  let headline = "";
+  let body = "";
+  if (rest.length >= 3) {
+    eyebrow = rest[0];
+    headline = rest[1];
+    body = rest.slice(2).join(" ");
+  } else if (rest.length === 2) {
+    eyebrow = rest[0];
+    headline = rest[1];
+  } else if (rest.length === 1) {
+    headline = rest[0];
+  }
+
+  return {
+    eyebrow: eyebrow || "Brand name",
+    headline: headline || "Page headline",
+    body: body || "Body copy goes here…",
+    primaryCta: primaryCta || "Primary CTA",
+    secondaryCta,
+  };
 }
 
-const DEFAULT_HERO: HeroContent = {
-  headline: "Support on your GLP-1 journey",
-  subheadline: "Evernorth EnGuide℠ Pharmacy",
-  body: "Held to the highest standards under the Evernorth® brand, our team of specially trained pharmacists are readily available to address your needs and work directly with your doctor to help you save money, discuss treatment options, and more.",
-  primaryCta: "Log in",
-  secondaryCta: "Learn more",
-};
-
 function HeroPreview({ content }: { content: HeroContent }) {
+  const parsed = parseHeroText(content.text);
   return (
     <div className="overflow-hidden rounded-xl" style={{ background: "#111" }}>
       <div className="px-5 py-7">
@@ -660,92 +710,37 @@ function HeroPreview({ content }: { content: HeroContent }) {
           className="mb-2 text-[9.5px] font-semibold uppercase tracking-widest"
           style={{ fontFamily: "'DM Mono', monospace", color: "rgba(255,255,255,0.32)" }}
         >
-          {content.subheadline || "Brand name"}
+          {parsed.eyebrow}
         </div>
         <h2
           className="mb-3 text-[21px] font-bold leading-snug"
           style={{ color: "#fff" }}
         >
-          {content.headline || "Page headline"}
+          {parsed.headline}
         </h2>
         <p
           className="mb-5 text-[12px] leading-relaxed"
           style={{ color: "rgba(255,255,255,0.52)", maxWidth: "320px" }}
         >
-          {content.body || "Body copy goes here…"}
+          {parsed.body}
         </p>
         <div className="flex flex-wrap gap-2">
           <span
             className="inline-block rounded-full px-4 py-2 text-[12px] font-semibold text-white"
             style={{ background: "#0033ff" }}
           >
-            {content.primaryCta || "Primary CTA"}
+            {parsed.primaryCta}
           </span>
-          {content.secondaryCta.trim() && (
+          {parsed.secondaryCta && (
             <span
               className="inline-block rounded-full px-4 py-2 text-[12px] font-semibold"
               style={{ border: "1px solid rgba(255,255,255,0.18)", color: "rgba(255,255,255,0.6)" }}
             >
-              {content.secondaryCta}
+              {parsed.secondaryCta}
             </span>
           )}
         </div>
       </div>
-    </div>
-  );
-}
-
-function ContentEditField({
-  label,
-  value,
-  onChange,
-  multiline = false,
-  placeholder = "",
-}: {
-  label: string;
-  value: string;
-  onChange: (v: string) => void;
-  multiline?: boolean;
-  placeholder?: string;
-}) {
-  const base: React.CSSProperties = {
-    width: "100%",
-    fontSize: "13px",
-    color: "#1a1a1a",
-    border: "1px solid rgba(0,0,0,0.1)",
-    borderRadius: "8px",
-    padding: "8px 10px",
-    background: "#fff",
-    outline: "none",
-    fontFamily: "'Figtree', system-ui, sans-serif",
-    resize: "none",
-    lineHeight: 1.5,
-  };
-  return (
-    <div>
-      <label
-        className="mb-1 block text-[10px] font-medium uppercase tracking-wide"
-        style={{ fontFamily: "'DM Mono', monospace", color: "#a09c98" }}
-      >
-        {label}
-      </label>
-      {multiline ? (
-        <textarea
-          rows={3}
-          value={value}
-          onChange={(e) => onChange(e.target.value)}
-          placeholder={placeholder}
-          style={base}
-        />
-      ) : (
-        <input
-          type="text"
-          value={value}
-          onChange={(e) => onChange(e.target.value)}
-          placeholder={placeholder}
-          style={base}
-        />
-      )}
     </div>
   );
 }
@@ -782,9 +777,6 @@ function ContentPanel({
     setSaved(true);
     setTimeout(() => setSaved(false), 2400);
   };
-
-  const set = (key: keyof HeroContent) => (v: string) =>
-    setHeroContent({ ...heroContent, [key]: v });
 
   return (
     <div
@@ -841,36 +833,33 @@ function ContentPanel({
               Edit content
             </div>
 
-            <ContentEditField
-              label="Headline"
-              value={heroContent.headline}
-              onChange={set("headline")}
-              placeholder="Page headline"
-            />
-            <ContentEditField
-              label="Sub-headline / Brand"
-              value={heroContent.subheadline}
-              onChange={set("subheadline")}
-              placeholder="Brand or category label"
-            />
-            <ContentEditField
-              label="Body copy"
-              value={heroContent.body}
-              onChange={set("body")}
-              multiline
-              placeholder="Supporting paragraph…"
-            />
-            <ContentEditField
-              label="Primary CTA"
-              value={heroContent.primaryCta}
-              onChange={set("primaryCta")}
-              placeholder="e.g. Log in"
-            />
-            <ContentEditField
-              label="Secondary CTA"
-              value={heroContent.secondaryCta}
-              onChange={set("secondaryCta")}
-              placeholder="e.g. Learn more (optional)"
+            <button
+              onClick={() => setHeroContent({ text: GENERATED_HERO_COPY })}
+              className="flex w-full cursor-pointer items-center justify-center gap-2.5 rounded-full py-3 text-[13.5px] font-semibold text-white transition-opacity hover:opacity-90"
+              style={{ background: "#0033ff" }}
+            >
+              <Zap size={14} />
+              Generate copy
+            </button>
+
+            <textarea
+              rows={8}
+              value={heroContent.text}
+              onChange={(e) => setHeroContent({ text: e.target.value })}
+              placeholder="Brand name&#10;Page headline&#10;Supporting paragraph…&#10;Primary CTA&#10;Secondary CTA"
+              style={{
+                width: "100%",
+                fontSize: "13px",
+                color: "#1a1a1a",
+                border: "1px solid rgba(0,0,0,0.1)",
+                borderRadius: "8px",
+                padding: "8px 10px",
+                background: "#fff",
+                outline: "none",
+                fontFamily: "'Figtree', system-ui, sans-serif",
+                resize: "none",
+                lineHeight: 1.5,
+              }}
             />
 
             <button
@@ -931,7 +920,7 @@ function Step4({
 
       <div
         className="grid gap-6"
-        style={{ gridTemplateColumns: "1fr 360px", alignItems: "start" }}
+        style={{ gridTemplateColumns: "50% 50%", alignItems: "start" }}
       >
         {/* Left: section list */}
         <div>
@@ -1104,7 +1093,7 @@ function Step5({
 
       <div
         className="grid gap-6"
-        style={{ gridTemplateColumns: "1fr 264px", alignItems: "start" }}
+        style={{ gridTemplateColumns: "50% 50%", alignItems: "start" }}
       >
         {/* ── Left: section editor ── */}
         <div>
