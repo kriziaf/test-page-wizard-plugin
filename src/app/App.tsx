@@ -10,7 +10,7 @@ import { MockPage, useLoadedSections } from "./mock/MockPage";
 import { buildHtml, downloadHtml } from "./export/exportHtml";
 
 // ── Types ────────────────────────────────────────────────────────────────
-type PageType = "business" | "article" | "blog" | "services";
+export type PageType = "business" | "article" | "blog" | "services";
 
 type SectionPattern = PatternId;
 
@@ -100,8 +100,8 @@ const WIRE_KIND: Record<SectionPattern, string> = {
   "text-media": "text-media",
   "expanded-text": "expanded-text",
   "longform-text": "expanded-text",
-  "two-col-form": "form",
-  "promo-banner-card": "promo-banner",
+  form: "form",
+  "promo-banner": "promo-banner",
 };
 
 // First documented variant per pattern (spec: default is the first documented variant).
@@ -118,11 +118,11 @@ const DEFAULT_VARIANT: Record<SectionPattern, string> = {
   "highlight-band": "subtle",
   "hero-primary": "image-overlay",
   "hero-secondary": "brand-strong",
-  "two-col-form": "subtle",
-  "promo-banner-card": "image-led-brand",
+  form: "subtle",
+  "promo-banner": "image-led-brand",
 };
 
-type SectionDef = {
+export type SectionDef = {
   id: string;
   name: string;
   pattern: SectionPattern;
@@ -132,7 +132,7 @@ type SectionDef = {
 };
 
 // Recommended sections per page type (spec: "Recommended Sections").
-const ARTICLE_SECTIONS: SectionDef[] = [
+export const ARTICLE_SECTIONS: SectionDef[] = [
   { id: "a1", name: "Article hero", pattern: "hero-secondary", description: "Headline and supporting line with one image", required: true },
   { id: "a2", name: "Article body", pattern: "longform-text", description: "Opening text establishing context", required: true },
   { id: "a3", name: "Text + media", pattern: "text-media", description: "Inline photo or video with surrounding copy" },
@@ -141,14 +141,14 @@ const ARTICLE_SECTIONS: SectionDef[] = [
   { id: "a6", name: "Supporting details", pattern: "accent-cards", description: "Short supporting facts, standing in for an author bio", required: true },
 ];
 
-const SECTIONS_BY_TYPE: Record<PageType, SectionDef[]> = {
+export const SECTIONS_BY_TYPE: Record<PageType, SectionDef[]> = {
   business: [
     { id: "b1", name: "Brand hero", pattern: "hero-primary", description: "Main headline, supporting copy, buttons, and one image", required: true },
     { id: "b2", name: "Entry points", pattern: "overview-cards", description: "Cards linking to key product or service areas" },
     { id: "b3", name: "Feature overview", pattern: "text-media", description: "Primary service highlight with photo or video" },
     { id: "b4", name: "Supporting details", pattern: "accent-cards", description: "Short feature cards with no links", required: true },
-    { id: "b5", name: "Promo banner", pattern: "promo-banner-card", description: "Campaign or next-step promotion" },
-    { id: "b6", name: "Contact form", pattern: "two-col-form", description: "Context beside a short form", required: true },
+    { id: "b5", name: "Promo banner", pattern: "promo-banner", description: "Campaign or next-step promotion" },
+    { id: "b6", name: "Contact form", pattern: "form", description: "Context beside a short form", required: true },
   ],
   article: ARTICLE_SECTIONS,
   blog: ARTICLE_SECTIONS.map((s) => ({ ...s, id: s.id.replace("a", "g") })),
@@ -158,8 +158,8 @@ const SECTIONS_BY_TYPE: Record<PageType, SectionDef[]> = {
     { id: "s3", name: "Service overview", pattern: "expanded-text", description: "Features or services as icon cards", variant: "split-1-col" },
     { id: "s4", name: "Feature video", pattern: "text-media", description: "Video with headline, body, and one button", variant: "image-left-video" },
     { id: "s5", name: "Supporting details", pattern: "accent-cards", description: "Short feature cards with no links" },
-    { id: "s6", name: "Final CTA", pattern: "promo-banner-card", description: "Closing banner with one or two buttons", required: true, variant: "branded-cta" },
-    { id: "s7", name: "Inquiry form", pattern: "two-col-form", description: "Context beside a short form" },
+    { id: "s6", name: "Final CTA", pattern: "promo-banner", description: "Closing banner with one or two buttons", required: true, variant: "branded-cta" },
+    { id: "s7", name: "Inquiry form", pattern: "form", description: "Context beside a short form" },
   ],
 };
 
@@ -181,6 +181,10 @@ function initSections(type: PageType): PageSection[] {
   return SECTIONS_BY_TYPE[type].map(makeSection);
 }
 
+// Parked patterns: registered and Figma-mapped, but hidden from the UI
+// pending content-architecture review. Revisit in specs/006-content-architecture-mapping/.
+const HIDDEN_PATTERNS = new Set<PatternId>(["highlight-band"]);
+
 /** Sections offered by Add section: removed recommended ones, then patterns not in the list. */
 function addPool(type: PageType, sections: PageSection[]): SectionDef[] {
   const heroPrimaryOk = type === "business" || type === "services";
@@ -196,7 +200,10 @@ function addPool(type: PageType, sections: PageSection[]): SectionDef[] {
       description: "Not in the recommended list",
     }));
   return [...removed, ...extras].filter(
-    (d) => (heroPrimaryOk || d.pattern !== "hero-primary") && variantsOf(d.pattern).length > 0,
+    (d) =>
+      (heroPrimaryOk || d.pattern !== "hero-primary") &&
+      variantsOf(d.pattern).length > 0 &&
+      !HIDDEN_PATTERNS.has(d.pattern),
   );
 }
 
