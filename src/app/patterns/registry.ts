@@ -3,6 +3,8 @@
 // copies to ./_generated (run automatically by predev/prebuild). Templates are
 // never loaded here.
 
+import type { FigmaRef } from "./figma-libraries";
+
 export type PatternId =
   | "overview-cards"
   | "accent-cards"
@@ -21,21 +23,153 @@ export type PatternId =
 
 export type PatternGroup = "Card patterns" | "Text and list" | "Functional";
 
-export const PATTERNS: Record<PatternId, { label: string; group: PatternGroup }> = {
-  "overview-cards": { label: "Overview cards", group: "Card patterns" },
-  "accent-cards": { label: "Accent cards", group: "Card patterns" },
-  "graphic-cards": { label: "Graphic cards", group: "Card patterns" },
-  "horizontal-cards": { label: "Horizontal cards", group: "Card patterns" },
-  "external-link-cards": { label: "External link cards", group: "Card patterns" },
-  "bullet-image": { label: "Bullet image", group: "Text and list" },
-  "text-media": { label: "Text media", group: "Text and list" },
-  "expanded-text": { label: "Expanded text", group: "Text and list" },
-  "longform-text": { label: "Longform text", group: "Text and list" },
-  "highlight-band": { label: "Highlight band", group: "Text and list" },
-  "hero-primary": { label: "Hero primary", group: "Functional" },
-  "hero-secondary": { label: "Hero secondary", group: "Functional" },
-  "two-col-form": { label: "Two-col form", group: "Functional" },
-  "promo-banner-card": { label: "Promo banner card", group: "Functional" },
+export const PATTERNS: Record<
+  PatternId,
+  { label: string; group: PatternGroup; figma?: FigmaRef }
+> = {
+  "overview-cards": {
+    label: "Overview cards",
+    group: "Card patterns",
+    figma: {
+      library: "leaf",
+      nodeId: "2400:13423",
+      status: "mapped",
+      verifiedAt: "2026-10-08",
+    },
+  },
+  "accent-cards": {
+    label: "Accent cards",
+    group: "Card patterns",
+    figma: {
+      library: "leaf",
+      nodeId: "2400:13278",
+      status: "mapped",
+      verifiedAt: "2026-10-08",
+    },
+  },
+  "graphic-cards": {
+    label: "Graphic cards",
+    group: "Card patterns",
+    figma: {
+      library: "leaf",
+      nodeId: "2462:27357",
+      status: "mapped",
+      verifiedAt: "2026-10-08",
+    },
+  },
+  "horizontal-cards": {
+    label: "Horizontal cards",
+    group: "Card patterns",
+    figma: {
+      library: "leaf",
+      nodeId: "5624:3980",
+      status: "mapped",
+      verifiedAt: "2026-10-08",
+    },
+  },
+  "external-link-cards": {
+    label: "External link cards",
+    group: "Card patterns",
+    figma: {
+      library: "leaf",
+      nodeId: "2400:13077",
+      status: "mapped",
+      verifiedAt: "2026-10-08",
+    },
+  },
+  "bullet-image": {
+    label: "Bullet image",
+    group: "Text and list",
+    figma: {
+      library: "leaf",
+      nodeId: "2545:8954",
+      status: "mapped",
+      verifiedAt: "2026-10-08",
+      notes: "Matched to \"bullet text\" component, not a literally-named bullet-image.",
+    },
+  },
+  "text-media": {
+    label: "Text media",
+    group: "Text and list",
+    figma: {
+      library: "leaf",
+      nodeId: "2462:35747",
+      status: "mapped",
+      verifiedAt: "2026-10-08",
+    },
+  },
+  "expanded-text": {
+    label: "Expanded text",
+    group: "Text and list",
+    figma: {
+      library: "leaf",
+      nodeId: "2502:41428",
+      status: "mapped",
+      verifiedAt: "2026-10-08",
+    },
+  },
+  "longform-text": {
+    label: "Longform text",
+    group: "Text and list",
+    figma: {
+      library: "leaf",
+      nodeId: "2542:46006",
+      status: "mapped",
+      verifiedAt: "2026-10-08",
+    },
+  },
+  "highlight-band": {
+    label: "Highlight band",
+    group: "Text and list",
+    figma: {
+      library: "leaf",
+      nodeId: "5077:28316",
+      status: "mapped",
+      verifiedAt: "2026-10-08",
+      notes: "Named \"Banner\" in Figma (List count=2/3/4 × Device); screenshot-verified.",
+    },
+  },
+  "hero-primary": {
+    label: "Hero primary",
+    group: "Functional",
+    figma: {
+      library: "leaf",
+      nodeId: "2579:44239",
+      status: "mapped",
+      verifiedAt: "2026-10-08",
+    },
+  },
+  "hero-secondary": {
+    label: "Hero secondary",
+    group: "Functional",
+    figma: {
+      library: "leaf",
+      nodeId: "2882:47746",
+      status: "mapped",
+      verifiedAt: "2026-10-08",
+    },
+  },
+  "two-col-form": {
+    label: "Two-col form",
+    group: "Functional",
+    figma: {
+      library: "leaf",
+      nodeId: "5077:26845",
+      status: "mapped",
+      verifiedAt: "2026-10-08",
+      notes: "Named \"forms\" in Figma; newer, fully-documented version on the \"✅ Form\" canvas (Device=Desktop/Mobile).",
+    },
+  },
+  "promo-banner-card": {
+    label: "Promo banner card",
+    group: "Functional",
+    figma: {
+      library: "leaf",
+      nodeId: "2462:27848",
+      status: "mapped",
+      verifiedAt: "2026-10-08",
+    },
+  },
 };
 
 const files = import.meta.glob("./_generated/*.svg", {
