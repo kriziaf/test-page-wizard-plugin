@@ -4,6 +4,11 @@
    ancestor themes everything below it. Mixed-theme pages are legal.
    Values traced from the Figma variables.json export. Do not
    hand-edit without updating the source export note below.
+
+   Source export: variables.json v1.0.4 (Figma Variables export, "The
+   Cigna Group" file), synced 2026-10-08. CHC ("Cigna Healthcare") was
+   cross-checked against this export; evernorth/tcg/white-label were
+   synced in an earlier pass.
    ============================================================ */
 
 [data-theme="evernorth"]{
@@ -230,17 +235,16 @@
   --color-button-secondary-border-disabled:#ABABAB;
   --color-button-secondary-focus-ring:#001466;
 
-  /* PROVISIONAL: inverse set not spec'd for this brand */
   --color-button-accent-bg:#FFFFFF;
   --color-button-accent-content:#0033FF;
   --color-button-accent-outline:#FFFFFF;
-  --color-button-accent-bg-hover:#E6E6E6;
-  --color-button-accent-bg-active:#CCCCCC;
-  --color-button-accent-bg-disabled:#ABABAB;
-  --color-button-accent-focus-ring:#FFFFFF;
-  --color-button-accent-outline-hover:#E6E6E6;
-  --color-button-accent-outline-active:#CCCCCC;
-  --color-button-accent-outline-disabled:#ABABAB;
+  --color-button-accent-bg-hover:#E6EBFF;
+  --color-button-accent-bg-active:#CCD6FF;
+  --color-button-accent-bg-disabled:#8880C0;
+  --color-button-accent-focus-ring:#E6EBFF;
+  --color-button-accent-outline-hover:#E6EBFF;
+  --color-button-accent-outline-active:#CCD6FF;
+  --color-button-accent-outline-disabled:#8880C0;
   --color-button-accent-outline-bg-hover:rgba(255,255,255,0.12);
   --color-button-accent-outline-bg-active:rgba(255,255,255,0.2);
 
@@ -278,7 +282,7 @@
   --typography-body-default-font-weight:400;
   --typography-label-default-font-size:1rem;
   --typography-label-default-line-height:1.5rem;
-  --typography-label-default-font-weight:500;
+  --typography-label-default-font-weight:600;
   --typography-label-default-letter-spacing:0;
   --typography-meta-default-font-size:1rem;
   --typography-meta-default-line-height:1.5rem;
